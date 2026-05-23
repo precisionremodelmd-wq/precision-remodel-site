@@ -1,0 +1,56 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Serve blog posts via the post template (URL rewrite)
+[[redirects]]
+  from = "/blog/:slug"
+  to = "/blog/post-template.html"
+  status = 200
+
+# Redirect /blog (no trailing slash) to blog index
+[[redirects]]
+  from = "/blog"
+  to = "/blog/index.html"
+  status = 301
+
+# Expose the new-post function at a clean URL
+[[redirects]]
+  from = "/api/new-post"
+  to = "/.netlify/functions/new-post"
+  status = 200
+
+# Custom 404
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
+# Security headers for all pages
+[[headers]]
+  for = "/*"
+    [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# No-cache HTML
+[[headers]]
+  for = "*.html"
+    [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Long-cache CSS and JS (update filenames to bust cache when changed)
+[[headers]]
+  for = "/css/*"
+    [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+    [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
