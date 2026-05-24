@@ -82,7 +82,7 @@ ${content.trim()}
   const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
   if (githubToken && githubRepo) {
-    const filePath = `blog/posts/${safeSlug}.md`;
+    const filePath = `precision-remodel-site/blog/posts/${safeSlug}.md`;
     const result = await githubWrite(githubToken, githubRepo, githubBranch, filePath, markdown);
     if (!result.ok) {
       return { statusCode: 500, body: JSON.stringify({ error: 'GitHub write failed', detail: result.error }) };
