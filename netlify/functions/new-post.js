@@ -2,18 +2,18 @@
  * Netlify Function: new-post
  * POST /api/new-post
  *
- * Accepts { title, slug, content, category, tags, date } and writes a markdown
+ * Accepts { title, slug, content, category, tags, date, rowNumber } and writes a markdown
  * file to /blog/posts/[slug].md, then triggers a Netlify deploy hook so the
- * new post becomes live.
+ * new post becomes live. After successful deploy, calls Make.com webhook to
+ * mark the Google Sheet row as PUBLISHED.
  *
  * Environment variables required:
  *   NETLIFY_DEPLOY_HOOK  — Your Netlify build hook URL
  *   NEW_POST_SECRET      — A secret token to protect this endpoint
- *
- * Note: Netlify Functions run in a read-only filesystem at runtime. Writing
- * directly to the repo requires the GitHub API (recommended) or a writable
- * volume. See README.md for the GitHub API integration approach.
- * The filesystem write below works in local dev (netlify dev) only.
+ *   GITHUB_TOKEN         — GitHub personal access token
+ *   GITHUB_REPO          — e.g. "precisionremodelmd-wq/precision-remodel-site"
+ *   GITHUB_BRANCH        — defaults to "main"
+ *   MAKE_WEBHOOK_URL     — Make.com webhook to mark sheet row PUBLISHED
  */
 
 const https = require('https');
@@ -39,7 +39,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON body' };
   }
 
-  const { title, slug, content, category = 'General', tags = [], date } = data;
+  const { title, slug, content, category = 'General', tags = [], date, rowNumber } = data;
 
   if (!title || !slug || !content) {
     return {
@@ -89,6 +89,12 @@ ${content.trim()}
     }
     /* Trigger Netlify deploy hook */
     await triggerDeploy();
+
+    /* Mark Google Sheet row as PUBLISHED via Make.com webhook */
+    if (rowNumber) {
+      await markPublished(rowNumber);
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -119,6 +125,34 @@ ${content.trim()}
     };
   }
 };
+
+/* --------------------------------------------------------
+   Mark Google Sheet row PUBLISHED via Make.com webhook
+   -------------------------------------------------------- */
+async function markPublished(rowNumber) {
+  const webhookUrl = process.env.MAKE_WEBHOOK_URL ||
+    'https://hook.us2.make.com/38xt6c5mh71a16iybmn8a7595d2cxght';
+  return new Promise(resolve => {
+    const body = JSON.stringify({ rowNumber });
+    const u = new URL(webhookUrl);
+    const options = {
+      hostname: u.hostname,
+      path: u.pathname,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    };
+    const req = https.request(options, res => {
+      res.on('data', () => {});
+      res.on('end', resolve);
+    });
+    req.on('error', resolve); /* non-fatal — don't fail the whole request */
+    req.write(body);
+    req.end();
+  });
+}
 
 /* --------------------------------------------------------
    GitHub API helper — creates or updates a file in the repo
