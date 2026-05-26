@@ -4,321 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Remodeling Blog | Precision Remodel LLC | NE Baltimore County</title>
-  <meta name="description" content="Expert kitchen and bathroom remodeling advice for northeast Baltimore County homeowners. Cost guides, planning tips, and project spotlights from licensed contractor Precision Remodel LLC.">
+  <meta name="description" content="Kitchen and bathroom remodeling tips, ideas, and insights for northeast Baltimore County homeowners from Precision Remodel LLC.">
   <link rel="canonical" href="https://precisionremodelingmd.com/blog/">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://precisionremodelingmd.com/blog/">
   <meta property="og:title" content="Remodeling Blog | Precision Remodel LLC">
-  <meta property="og:description" content="Expert kitchen and bathroom remodeling advice for northeast Baltimore County homeowners.">
+  <meta property="og:description" content="Kitchen and bathroom remodeling tips and insights for northeast Baltimore County homeowners.">
   <meta property="og:image" content="https://precisionremodelingmd.com/images/projects/kitchen-perry-hall-after.png">
   <meta property="og:site_name" content="Precision Remodel LLC">
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="icon" type="image/png" href="../images/projects/kitchen-perry-hall-after.png">
+  <link rel="stylesheet" href="/css/styles.css">
 
-  <style>
-    /* Blog Index Styles */
-    .blog-hero {
-      padding: 9rem 1.5rem 5rem;
-      background: var(--bg-primary);
-      border-bottom: 1px solid var(--border);
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Precision Remodel LLC Blog",
+    "url": "https://precisionremodelingmd.com/blog/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Precision Remodel LLC",
+      "url": "https://precisionremodelingmd.com"
     }
-    .blog-hero .container { max-width: var(--max-width); margin: 0 auto; }
-    .blog-hero-label {
-      display: block;
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.2rem;
-    }
-    .blog-hero h1 {
-      font-size: clamp(2.8rem, 5vw, 4.5rem);
-      font-weight: 500;
-      max-width: 16ch;
-      margin-bottom: 1.5rem;
-    }
-    .blog-hero p {
-      font-size: 1.05rem;
-      max-width: 52ch;
-      color: var(--text-secondary);
-    }
+  }
+  </script>
 
-    /* Filter Bar */
-    .filter-bar {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-primary);
-      position: sticky;
-      top: 72px;
-      z-index: 10;
-    }
-    .filter-bar .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .filter-btn {
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.45rem 1rem;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-secondary);
-      border-radius: 2px;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-    .filter-btn:hover,
-    .filter-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(201, 169, 110, 0.06);
-    }
-
-    /* Blog Grid */
-    .blog-grid-section {
-      padding: 4rem 1.5rem 6rem;
-      background: var(--bg-primary);
-    }
-    .blog-grid-section .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-    }
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    /* Post Card */
-    .post-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: border-color var(--transition), transform var(--transition);
-      display: flex;
-      flex-direction: column;
-    }
-    .post-card:hover {
-      border-color: rgba(201, 169, 110, 0.3);
-      transform: translateY(-3px);
-    }
-    .post-card-body {
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    .post-card-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .post-card-category {
-      font-family: var(--font-body);
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .post-card-meta-dot {
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: var(--text-muted);
-    }
-    .post-card-date {
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-    .post-card-read-time {
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-left: auto;
-    }
-    .post-card h2 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      line-height: 1.35;
-      margin-bottom: 0.85rem;
-      color: var(--text-primary);
-    }
-    .post-card h2 a {
-      color: inherit;
-      text-decoration: none;
-      transition: color var(--transition);
-    }
-    .post-card h2 a:hover {
-      color: var(--accent);
-      opacity: 1;
-    }
-    .post-card-excerpt {
-      font-size: 0.88rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-      flex: 1;
-    }
-    .post-card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-    .post-card-city {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-    }
-    .post-card-link {
-      font-family: var(--font-body);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: gap var(--transition);
-    }
-    .post-card-link:hover {
-      gap: 0.65rem;
-      opacity: 1;
-    }
-    .post-card-link svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* Featured post (first card) */
-    .post-card.featured {
-      grid-column: span 3;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .post-card.featured .post-card-body {
-      padding: 2.5rem;
-    }
-    .post-card.featured h2 {
-      font-size: 1.75rem;
-    }
-    .post-card.featured .post-card-featured-badge {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #0d0d0b;
-      background: var(--accent);
-      padding: 0.25rem 0.6rem;
-      border-radius: 2px;
-      margin-bottom: 1rem;
-    }
-    .post-card.featured .post-card-img {
-      background: var(--bg-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-      overflow: hidden;
-    }
-    .post-card.featured .post-card-img-placeholder {
-      width: 100%;
-      height: 100%;
-      min-height: 300px;
-      background: linear-gradient(135deg, #1e1e1a 0%, #2a2a24 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .post-card.featured .post-card-img-placeholder svg {
-      width: 64px;
-      height: 64px;
-      opacity: 0.15;
-    }
-
-    /* Loading / empty state */
-    .blog-loading {
-      grid-column: span 3;
-      text-align: center;
-      padding: 4rem 0;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-    .blog-empty {
-      grid-column: span 3;
-      text-align: center;
-      padding: 5rem 0;
-    }
-    .blog-empty h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--text-secondary);
-    }
-    .blog-empty p {
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-    }
-
-    /* CTA strip */
-    .blog-cta {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-      padding: 4rem 1.5rem;
-      text-align: center;
-    }
-    .blog-cta .container { max-width: var(--max-width); margin: 0 auto; }
-    .blog-cta h2 {
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      margin-bottom: 1rem;
-    }
-    .blog-cta p {
-      color: var(--text-secondary);
-      max-width: 48ch;
-      margin: 0 auto 2rem;
-    }
-    .blog-cta-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .blog-grid { grid-template-columns: 1fr 1fr; }
-      .post-card.featured { grid-column: span 2; grid-template-columns: 1fr; }
-      .post-card.featured .post-card-img { display: none; }
-    }
-    @media (max-width: 600px) {
-      .blog-grid { grid-template-columns: 1fr; }
-      .post-card.featured { grid-column: span 1; }
-      .filter-bar { top: 60px; }
-    }
-  </style>
+  <link rel="icon" type="image/png" href="/images/projects/kitchen-perry-hall-after.png">
+  <link rel="apple-touch-icon" href="/images/projects/kitchen-perry-hall-after.png">
 </head>
 <body>
 
@@ -330,13 +47,13 @@
         <span class="nav-logo-tag">MHIC #151439 · NE Baltimore County</span>
       </a>
       <ul class="nav-links" id="navLinks" role="menubar">
-        <li role="none"><a href='/kitchens' role='menuitem'>Kitchens</a></li>
-        <li role="none"><a href='/bathrooms' role='menuitem'>Bathrooms</a></li>
-        <li role="none"><a href='/our-work' role='menuitem'>Our Work</a></li>
-        <li role="none"><a href='/process' role='menuitem'>Process</a></li>
-        <li role="none"><a href='/about' role='menuitem'>About</a></li>
-        <li role="none"><a href="/blog/" class="active" role="menuitem">Blog</a></li>
-        <li role="none"><a class='nav-cta' href='/contact' role='menuitem'>Free Consultation</a></li>
+        <li role="none"><a href="/kitchens.html" role="menuitem">Kitchens</a></li>
+        <li role="none"><a href="/bathrooms.html" role="menuitem">Bathrooms</a></li>
+        <li role="none"><a href="/our-work.html" role="menuitem">Our Work</a></li>
+        <li role="none"><a href="/process.html" role="menuitem">Process</a></li>
+        <li role="none"><a href="/about.html" role="menuitem">About</a></li>
+        <li role="none"><a href="/blog/index.html" role="menuitem">Blog</a></li>
+        <li role="none"><a href="/contact.html" class="nav-cta" role="menuitem">Free Consultation</a></li>
       </ul>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
@@ -344,194 +61,186 @@
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section class="blog-hero">
-    <div class="container">
-      <span class="blog-hero-label">The Precision Remodel Blog</span>
-      <h1>Remodeling Insights for Baltimore County Homeowners</h1>
-      <p>Cost guides, planning advice, project spotlights, and contractor tips — written by a licensed Maryland contractor serving northeast Baltimore County since 2012.</p>
+  <!-- Page Hero -->
+  <section class="page-hero" aria-labelledby="blog-heading">
+    <div class="page-hero-inner">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>Blog</span>
+      </nav>
+      <span class="section-label">Remodeling Insights</span>
+      <h1 id="blog-heading">The Precision Blog</h1>
+      <div class="divider"></div>
+      <p class="lead">Tips, ideas, and honest advice for homeowners planning a kitchen or bathroom renovation in northeast Baltimore County.</p>
     </div>
   </section>
 
-  <!-- Filter Bar -->
-  <div class="filter-bar">
+  <!-- Blog Content -->
+  <section class="section" aria-label="Blog posts">
     <div class="container">
-      <button class="filter-btn active" data-filter="all">All Posts</button>
-      <button class="filter-btn" data-filter="Kitchen">Kitchens</button>
-      <button class="filter-btn" data-filter="Bathroom">Bathrooms</button>
-      <button class="filter-btn" data-filter="Trust">Contractor Tips</button>
-    </div>
-  </div>
+      <div class="blog-layout">
 
-  <!-- Blog Grid -->
-  <section class="blog-grid-section">
-    <div class="container">
-      <div class="blog-grid" id="blogGrid">
-        <div class="blog-loading">Loading posts…</div>
-      </div>
-    </div>
-  </section>
+        <!-- Post Grid -->
+        <div>
+          <div class="blog-grid" id="blog-grid" aria-live="polite">
+            <p style="color:var(--text-muted);font-size:0.9rem;letter-spacing:0.05em;">Loading posts&hellip;</p>
+          </div>
+        </div>
 
-  <!-- CTA -->
-  <section class="blog-cta">
-    <div class="container">
-      <h2>Ready to Start Your Project?</h2>
-      <p>We serve homeowners across northeast Baltimore County. Kitchens from $25,000 · Bathrooms from $16,000 · MHIC #151439.</p>
-      <div class="blog-cta-buttons">
-        <a href="/contact" class="btn btn-primary">Request a Free Consultation</a>
-        <a href="tel:4437619209" class="btn btn-outline">Call 443-761-9209</a>
+        <!-- Sidebar -->
+        <aside class="blog-sidebar" aria-label="Blog sidebar">
+          <div class="blog-sidebar-widget">
+            <h4>Free Consultation</h4>
+            <p>Let's talk about your project. No commitment, no sales pitch — just a focused conversation about what's possible.</p>
+            <a href="/contact.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">Schedule Now</a>
+          </div>
+          <div class="blog-sidebar-widget">
+            <h4>Our Services</h4>
+            <ul style="display:flex;flex-direction:column;gap:0.625rem;">
+              <li><a href="/kitchens.html" style="font-size:0.875rem;color:var(--text-secondary);">Kitchen Remodeling</a></li>
+              <li><a href="/bathrooms.html" style="font-size:0.875rem;color:var(--text-secondary);">Bathroom Remodeling</a></li>
+              <li><a href="/our-work.html" style="font-size:0.875rem;color:var(--text-secondary);">View Our Portfolio</a></li>
+              <li><a href="/service-area.html" style="font-size:0.875rem;color:var(--text-secondary);">Service Area</a></li>
+            </ul>
+          </div>
+          <div class="blog-sidebar-widget">
+            <h4>Contact</h4>
+            <p style="font-size:0.85rem;">Serving NE Baltimore County — Essex, White Marsh, Perry Hall, Towson, and surrounding communities.</p>
+            <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem;">
+              <a href="tel:4437619209" style="font-size:0.875rem;">443-761-9209</a>
+              <a href="mailto:jon@precisionremodelingmd.com" style="font-size:0.875rem;">jon@precisionremodelingmd.com</a>
+            </div>
+          </div>
+        </aside>
+
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer style="background:#0d0d0b; border-top:1px solid rgba(240,237,232,0.08); padding:2.5rem 1.5rem; text-align:center;">
-    <div style="max-width:1200px; margin:0 auto;">
-      <p style="font-size:0.8rem; color:rgba(240,237,232,0.35);">
-        © 2026 Precision Remodel LLC · MHIC #151439 · 443-761-9209 · Northeast Baltimore County, MD
-      </p>
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="nav-logo-name" style="display:block;margin-bottom:4px;">Precision Remodel LLC</span>
+          <span class="nav-logo-tag" style="display:block;">MHIC #151439 · NE Baltimore County</span>
+          <p>Luxury kitchen and bathroom remodeling for homeowners in Essex, White Marsh, Perry Hall, Towson, and surrounding NE Baltimore County communities. We don't serve Baltimore City or Anne Arundel County.</p>
+          <div class="footer-contact">
+            <div class="footer-contact-item">
+              <span class="lbl">Phone</span>
+              <a href="tel:4437619209">443-761-9209</a>
+            </div>
+            <div class="footer-contact-item">
+              <span class="lbl">Email</span>
+              <a href="mailto:jon@precisionremodelingmd.com">jon@precisionremodelingmd.com</a>
+            </div>
+            <div class="footer-contact-item">
+              <span class="lbl">Owner</span>
+              <span>Jonathan Kruse</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>
+          <ul>
+            <li><a href="/kitchens.html">Kitchen Remodeling</a></li>
+            <li><a href="/bathrooms.html">Bathroom Remodeling</a></li>
+            <li><a href="/our-work.html">Portfolio</a></li>
+            <li><a href="/contact.html">Free Consultation</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="/about.html">About Jonathan</a></li>
+            <li><a href="/process.html">Our Process</a></li>
+            <li><a href="/service-area.html">Service Area</a></li>
+            <li><a href="/blog/index.html">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Service Area</h5>
+          <ul>
+            <li><a href="/service-area.html">Essex &amp; Middle River</a></li>
+            <li><a href="/service-area.html">White Marsh &amp; Perry Hall</a></li>
+            <li><a href="/service-area.html">Towson &amp; Lutherville</a></li>
+            <li><a href="/service-area.html">Cockeysville &amp; Hunt Valley</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Precision Remodel LLC &middot; precisionremodelingmd.com &middot; Serving NE Baltimore County, MD &middot; Owner: Jonathan Kruse</p>
+        <span class="footer-license">MHIC #151439</span>
+      </div>
     </div>
   </footer>
 
+  <script src="/js/main.js"></script>
   <script>
-    // ── Nav scroll behavior ──────────────────────────────────────
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('nav--scrolled', window.scrollY > 40);
-    });
+    /* Blog index — load posts from manifest and render cards */
+    (function () {
+      var grid = document.getElementById('blog-grid');
 
-    // ── Mobile nav toggle ────────────────────────────────────────
-    const navToggle = document.getElementById('navToggle');
-    const navLinks  = document.getElementById('navLinks');
-    navToggle.addEventListener('click', () => {
-      const open = navLinks.classList.toggle('open');
-      navToggle.setAttribute('aria-expanded', open);
-    });
+      fetch('/blog/posts.json')
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (posts) {
+          if (!Array.isArray(posts) || !posts.length) {
+            grid.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;">No posts yet — check back soon.</p>';
+            return;
+          }
+          grid.innerHTML = posts.map(function (post) {
+            return [
+              '<article class="blog-card fade-up">',
+              '  <div class="blog-card-body">',
+              '    <div class="blog-card-meta">',
+              '      <span class="cat">' + esc(post.category || 'Remodeling') + '</span>',
+              '      <span class="date">' + formatDate(post.date) + '</span>',
+              '    </div>',
+              '    <h3>' + esc(post.title) + '</h3>',
+              post.excerpt ? '    <p>' + esc(post.excerpt) + '</p>' : '',
+              '    <div class="blog-card-footer">',
+              '      <span>' + esc(post.readTime || '') + '</span>',
+              '      <a href="/blog/' + esc(post.slug) + '" class="btn-ghost">Read more &rarr;</a>',
+              '    </div>',
+              '  </div>',
+              '</article>',
+            ].join('\n');
+          }).join('\n');
 
-    // ── Blog posts ───────────────────────────────────────────────
-    // Add posts here as they are published. The automation adds markdown
-    // files to /blog/posts/ — update this array to match.
-    // Format: { slug, title, date, category, excerpt, readTime, city }
+          /* Trigger fade-up animations */
+          if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('in-view');
+                  observer.unobserve(entry.target);
+                }
+              });
+            }, { threshold: 0.08 });
+            grid.querySelectorAll('.fade-up').forEach(function (el) { observer.observe(el); });
+          } else {
+            grid.querySelectorAll('.fade-up').forEach(function (el) { el.classList.add('in-view'); });
+          }
+        })
+        .catch(function () {
+          grid.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;">Could not load posts. <a href="/contact.html">Contact us</a> for help.</p>';
+        });
 
-    const posts = [
-      {
-        slug: 'home-remodeling-tips-northeast-baltimore-county',
-        title: 'Home Remodeling Tips for Northeast Baltimore County Homeowners',
-        date: '2026-05-25',
-        category: 'Kitchen',
-        excerpt: 'Planning a kitchen or bathroom remodel in Essex, Perry Hall, or White Marsh? Here\'s what northeast Baltimore County homeowners need to know before starting their project.',
-        readTime: '5 min read',
-        city: 'Northeast Baltimore County'
-      },
-      {
-        slug: 'expert-kitchen-bathroom-remodeling-northeast-baltimore-county',
-        title: 'Expert Kitchen & Bathroom Remodeling in Northeast Baltimore County',
-        date: '2026-05-23',
-        category: 'Kitchen',
-        excerpt: 'A licensed Maryland contractor\'s guide to kitchen and bathroom remodeling across Essex, White Marsh, Perry Hall, Towson, and surrounding communities.',
-        readTime: '5 min read',
-        city: 'Northeast Baltimore County'
-      }
-    ];
-
-    // ── Filter state ─────────────────────────────────────────────
-    let activeFilter = 'all';
-
-    function formatDate(dateStr) {
-      const d = new Date(dateStr + 'T12:00:00');
-      return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    }
-
-    function renderPosts(filter) {
-      const grid = document.getElementById('blogGrid');
-      const filtered = filter === 'all' ? posts : posts.filter(p => p.category === filter);
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div class="blog-empty">
-            <h3>No posts yet in this category</h3>
-            <p>Check back soon — we publish new guides every week.</p>
-            <a href="/blog/" class="btn btn-outline" onclick="setFilter('all');return false;">View All Posts</a>
-          </div>`;
-        return;
+      function formatDate(str) {
+        if (!str) return '';
+        var d = new Date(str + 'T00:00:00');
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
       }
 
-      grid.innerHTML = filtered.map((post, i) => {
-        const isFeatured = i === 0 && filter === 'all';
-        if (isFeatured) {
-          return `
-            <article class="post-card featured" data-category="${post.category}">
-              <div class="post-card-body">
-                <span class="post-card-featured-badge">Latest Post</span>
-                <div class="post-card-meta">
-                  <span class="post-card-category">${post.category}</span>
-                  <span class="post-card-meta-dot"></span>
-                  <span class="post-card-date">${formatDate(post.date)}</span>
-                  <span class="post-card-read-time">${post.readTime}</span>
-                </div>
-                <h2><a href="/blog/posts/${post.slug}">${post.title}</a></h2>
-                <p class="post-card-excerpt">${post.excerpt}</p>
-                <div class="post-card-footer">
-                  <span class="post-card-city">${post.city}</span>
-                  <a href="/blog/posts/${post.slug}" class="post-card-link">
-                    Read Article
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <path d="M3 8h10M9 4l4 4-4 4"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-              <div class="post-card-img">
-                <div class="post-card-img-placeholder">
-                  <svg viewBox="0 0 64 64" fill="none" stroke="#c9a96e" stroke-width="1">
-                    <rect x="8" y="16" width="48" height="32" rx="2"/>
-                    <path d="M8 24h48M20 16v8M44 16v8"/>
-                  </svg>
-                </div>
-              </div>
-            </article>`;
-        }
-        return `
-          <article class="post-card" data-category="${post.category}">
-            <div class="post-card-body">
-              <div class="post-card-meta">
-                <span class="post-card-category">${post.category}</span>
-                <span class="post-card-meta-dot"></span>
-                <span class="post-card-date">${formatDate(post.date)}</span>
-                <span class="post-card-read-time">${post.readTime}</span>
-              </div>
-              <h2><a href="/blog/posts/${post.slug}">${post.title}</a></h2>
-              <p class="post-card-excerpt">${post.excerpt}</p>
-              <div class="post-card-footer">
-                <span class="post-card-city">${post.city}</span>
-                <a href="/blog/posts/${post.slug}" class="post-card-link">
-                  Read Article
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M3 8h10M9 4l4 4-4 4"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </article>`;
-      }).join('');
-    }
-
-    function setFilter(filter) {
-      activeFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-      });
-      renderPosts(filter);
-    }
-
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => setFilter(btn.dataset.filter));
-    });
-
-    // Initial render
-    renderPosts('all');
+      function esc(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+    })();
   </script>
-
 </body>
 </html>

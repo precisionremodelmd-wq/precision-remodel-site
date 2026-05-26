@@ -23,11 +23,6 @@
   to = "/.netlify/functions/new-post"
   status = 200
 
-# Custom 404
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404
 
 # Security headers for all pages
 [[headers]]
