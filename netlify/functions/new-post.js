@@ -39,7 +39,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON body' };
   }
 
-  const { title, slug, content, category = 'General', tags = [], date, rowNumber } = data;
+  const { title, slug, content, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber } = data;
 
   if (!title || !slug || !content) {
     return {
@@ -67,8 +67,8 @@ slug: "${safeSlug}"
 date: "${postDate}"
 category: "${category}"
 tags: [${tagList}]
-excerpt: ""
-metaDescription: ""
+excerpt: "${excerpt.replace(/"/g, '\\"')}"
+metaDescription: "${metaDescription.replace(/"/g, '\\"')}"
 author: "Precision Remodel LLC"
 readTime: "${readTime}"
 ---
@@ -82,11 +82,29 @@ ${content.trim()}
   const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
   if (githubToken && githubRepo) {
-    const filePath = `precision-remodel-site/blog/posts/${safeSlug}.md`;
+    const filePath = `blog/posts/${safeSlug}.md`;
     const result = await githubWrite(githubToken, githubRepo, githubBranch, filePath, markdown);
     if (!result.ok) {
       return { statusCode: 500, body: JSON.stringify({ error: 'GitHub write failed', detail: result.error }) };
     }
+
+    /* Update blog/posts.json manifest (non-fatal if it fails) */
+    const excerptForManifest = excerpt || content
+      .replace(/^#{1,6}\s+.+$/gm, '')
+      .replace(/[*_`#>\[\]!]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 220);
+    await updatePostsManifest(githubToken, githubRepo, githubBranch, {
+      title,
+      slug: safeSlug,
+      date: postDate,
+      category,
+      excerpt: excerptForManifest,
+      readTime,
+      author: 'Precision Remodel LLC',
+    }).catch(() => { /* manifest update failure is non-fatal */ });
+
     /* Trigger Netlify deploy hook */
     await triggerDeploy();
 
@@ -125,6 +143,34 @@ ${content.trim()}
     };
   }
 };
+
+/* --------------------------------------------------------
+   Update blog/posts.json manifest (newest post first)
+   -------------------------------------------------------- */
+async function updatePostsManifest(token, repo, branch, newPost) {
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/blog/posts.json`;
+  const headers = {
+    Authorization: `token ${token}`,
+    'User-Agent': 'Precision-Remodel-CMS',
+    Accept: 'application/vnd.github.v3+json',
+  };
+
+  let posts = [];
+  try {
+    const existing = await httpGet(apiUrl, headers);
+    if (existing.content) {
+      const decoded = Buffer.from(existing.content, 'base64').toString('utf8');
+      posts = JSON.parse(decoded);
+    }
+  } catch { /* file doesn't exist yet — start fresh */ }
+
+  /* Remove any existing entry with the same slug (re-publish case) */
+  posts = posts.filter(p => p.slug !== newPost.slug);
+  /* Prepend new post so newest is first */
+  posts.unshift(newPost);
+
+  return githubWrite(token, repo, branch, 'blog/posts.json', JSON.stringify(posts, null, 2));
+}
 
 /* --------------------------------------------------------
    Mark Google Sheet row PUBLISHED via Make.com webhook
