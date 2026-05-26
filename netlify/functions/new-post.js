@@ -105,6 +105,25 @@ ${content.trim()}
       author: 'Precision Remodel LLC',
     }).catch(() => { /* manifest update failure is non-fatal */ });
 
+    /* Write per-slug HTML page (reads post-template.html from repo so it stays in sync) */
+    await (async () => {
+      try {
+        const tmplHeaders = {
+          Authorization: `token ${githubToken}`,
+          'User-Agent': 'Precision-Remodel-CMS',
+          Accept: 'application/vnd.github.v3+json',
+        };
+        const tmplData = await httpGet(
+          `https://api.github.com/repos/${githubRepo}/contents/blog/post-template.html`,
+          tmplHeaders
+        );
+        if (tmplData.content) {
+          const tmplHtml = Buffer.from(tmplData.content, 'base64').toString('utf8');
+          await githubWrite(githubToken, githubRepo, githubBranch, `blog/${safeSlug}.html`, tmplHtml);
+        }
+      } catch { /* non-fatal */ }
+    })();
+
     /* Trigger Netlify deploy hook */
     await triggerDeploy();
 
