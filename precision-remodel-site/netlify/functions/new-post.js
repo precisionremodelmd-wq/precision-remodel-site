@@ -167,7 +167,7 @@ ${content.trim()}
    Update blog/posts.json manifest (newest post first)
    -------------------------------------------------------- */
 async function updatePostsManifest(token, repo, branch, newPost) {
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/precision-remodel-site/blog/posts.json`;
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/precision-remodel-site/posts.json`;
   const headers = {
     Authorization: `token ${token}`,
     'User-Agent': 'Precision-Remodel-CMS',
@@ -188,7 +188,7 @@ async function updatePostsManifest(token, repo, branch, newPost) {
   /* Prepend new post so newest is first */
   posts.unshift(newPost);
 
-  return githubWrite(token, repo, branch, 'precision-remodel-site/blog/posts.json', JSON.stringify(posts, null, 2));
+  return githubWrite(token, repo, branch, 'precision-remodel-site/posts.json', JSON.stringify(posts, null, 2));
 }
 
 /* --------------------------------------------------------

@@ -182,7 +182,7 @@
     (function () {
       var grid = document.getElementById('blog-grid');
 
-      fetch('/blog/posts.json')
+      fetch('/posts.json')
         .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function (posts) {
           if (!Array.isArray(posts) || !posts.length) {
