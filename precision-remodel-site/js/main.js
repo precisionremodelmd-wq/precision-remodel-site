@@ -176,6 +176,20 @@
     if (dateEl) dateEl.textContent = formatDate(meta.date);
     if (readEl) readEl.textContent = meta.readTime || '';
 
+    /* Hero image based on category */
+    const heroImg = document.getElementById('post-hero-img');
+    const heroImgEl = document.getElementById('post-hero-img-el');
+    if (heroImg && heroImgEl) {
+      const cat = (meta.category || '').toLowerCase();
+      heroImgEl.src = cat.includes('kitchen')
+        ? '/images/projects/kitchen-perry-hall-after.png'
+        : cat.includes('bathroom')
+        ? '/images/projects/bathroom-sparrows-point-after.jpg'
+        : '/images/projects/kitchen-stevenson-after-1.jpg';
+      heroImgEl.alt = (meta.title || 'Project photo') + ' — Precision Remodel LLC';
+      heroImg.removeAttribute('style');
+    }
+
     /* Render markdown (basic; marked.js loaded in template) */
     if (window.marked) {
       postBody.innerHTML = window.marked.parse(content);

@@ -203,6 +203,51 @@ p { color: var(--text-secondary); }
 
 .nav-cta:hover { background: #d4b57c; color: #0d0d0b !important; }
 
+.nav-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--accent);
+  color: var(--accent) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  border-radius: var(--radius);
+  white-space: nowrap;
+  transition: background 0.18s, color 0.18s;
+}
+.nav-phone:hover { background: var(--accent); color: #0d0d0b !important; }
+.nav-phone .icon-phone { flex-shrink: 0; }
+
+@media (max-width: 960px) {
+  .nav-phone {
+    border: none;
+    font-size: 1.75rem !important;
+    font-family: var(--font-heading);
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    padding: 0;
+    letter-spacing: 0.03em !important;
+  }
+  .nav-phone:hover { background: none; color: var(--accent) !important; }
+  .nav-phone .icon-phone { display: none; }
+  .nav-phone .nav-phone-num::before { content: 'Call '; }
+}
+
+.post-hero-img {
+  width: 100%;
+  max-height: 460px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+.post-hero-img img {
+  width: 100%;
+  max-height: 460px;
+  object-fit: cover;
+  display: block;
+}
+
 .nav-toggle {
   display: none;
   background: none;
