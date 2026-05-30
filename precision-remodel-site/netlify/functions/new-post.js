@@ -88,8 +88,13 @@ ${content.trim()}
       return { statusCode: 500, body: JSON.stringify({ error: 'GitHub write failed', detail: result.error }) };
     }
 
-    /* Update blog/posts.json manifest (non-fatal if it fails) */
-    const excerptForManifest = excerpt || content
+    /* Update posts.json manifest (non-fatal if it fails) */
+    const bodyForExcerpt = content
+      .replace(/^```+\w*\s*/i, '')
+      .replace(/^---[\s\S]*?---\s*/m, '')
+      .replace(/^---[\s\S]*?---\s*/m, '')
+      .trim();
+    const excerptForManifest = excerpt || bodyForExcerpt
       .replace(/^#{1,6}\s+.+$/gm, '')
       .replace(/[*_`#>\[\]!]/g, '')
       .replace(/\s+/g, ' ')

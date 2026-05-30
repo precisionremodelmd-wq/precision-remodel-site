@@ -82,14 +82,20 @@ ${content.trim()}
   const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
   if (githubToken && githubRepo) {
-    const filePath = `blog/posts/${safeSlug}.md`;
+    const filePath = `precision-remodel-site/blog/posts/${safeSlug}.md`;
     const result = await githubWrite(githubToken, githubRepo, githubBranch, filePath, markdown);
     if (!result.ok) {
       return { statusCode: 500, body: JSON.stringify({ error: 'GitHub write failed', detail: result.error }) };
     }
 
-    /* Update blog/posts.json manifest (non-fatal if it fails) */
-    const excerptForManifest = excerpt || content
+    /* Update posts.json manifest (non-fatal if it fails) */
+    /* Strip frontmatter and code-fence openers before generating excerpt */
+    const bodyForExcerpt = content
+      .replace(/^```+\w*\s*/i, '')        /* opening ``` fence */
+      .replace(/^---[\s\S]*?---\s*/m, '') /* first frontmatter block */
+      .replace(/^---[\s\S]*?---\s*/m, '') /* second block if double-wrapped */
+      .trim();
+    const excerptForManifest = excerpt || bodyForExcerpt
       .replace(/^#{1,6}\s+.+$/gm, '')
       .replace(/[*_`#>\[\]!]/g, '')
       .replace(/\s+/g, ' ')
@@ -114,12 +120,12 @@ ${content.trim()}
           Accept: 'application/vnd.github.v3+json',
         };
         const tmplData = await httpGet(
-          `https://api.github.com/repos/${githubRepo}/contents/blog/post-template.html`,
+          `https://api.github.com/repos/${githubRepo}/contents/precision-remodel-site/blog/post-template.html`,
           tmplHeaders
         );
         if (tmplData.content) {
           const tmplHtml = Buffer.from(tmplData.content, 'base64').toString('utf8');
-          await githubWrite(githubToken, githubRepo, githubBranch, `blog/${safeSlug}.html`, tmplHtml);
+          await githubWrite(githubToken, githubRepo, githubBranch, `precision-remodel-site/blog/${safeSlug}.html`, tmplHtml);
         }
       } catch { /* non-fatal */ }
     })();
