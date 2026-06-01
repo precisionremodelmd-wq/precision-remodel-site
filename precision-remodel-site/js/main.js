@@ -199,8 +199,14 @@
   }
 
   function parseFrontmatter(raw) {
-    const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-    if (!match) return { meta: {}, content: raw };
+    // Normalise line endings
+    const normalised = raw.replace(/\r\n/g, '\n').trim();
+
+    // Strip any leading code fence (```markdown or ```)
+    const stripped = normalised.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/i, '').trim();
+
+    const match = stripped.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+    if (!match) return { meta: {}, content: stripped };
 
     const meta = {};
     match[1].split('\n').forEach(line => {
@@ -211,7 +217,11 @@
       meta[key] = val;
     });
 
-    return { meta, content: match[2].trim() };
+    // Strip any second/duplicate frontmatter block from content
+    let content = match[2].trim();
+    content = content.replace(/^---[\s\S]*?---\n?/, '').trim();
+
+    return { meta, content };
   }
 
   function formatDate(str) {
