@@ -41,6 +41,8 @@ exports.handler = async (event) => {
 
   const { title, slug, content, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber } = data;
 
+  const sanitizedContent = sanitizeClaudeOutput(content);
+
   if (!title || !slug || !content) {
     return {
       statusCode: 400,
@@ -58,7 +60,7 @@ exports.handler = async (event) => {
 
   /* Build frontmatter */
   const tagList = Array.isArray(tags) ? tags.map(t => `"${t}"`).join(', ') : `"${tags}"`;
-  const wordCount = content.split(/\s+/).length;
+  const wordCount = sanitizedContent.split(/\s+/).length;
   const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
 
   const markdown = `---
@@ -73,7 +75,7 @@ author: "Precision Remodel LLC"
 readTime: "${readTime}"
 ---
 
-${content.trim()}
+${sanitizedContent}
 `;
 
   /* --- Option A: GitHub API (production-recommended) --- */
@@ -89,12 +91,7 @@ ${content.trim()}
     }
 
     /* Update posts.json manifest (non-fatal if it fails) */
-    /* Strip frontmatter and code-fence openers before generating excerpt */
-    const bodyForExcerpt = content
-      .replace(/^```+\w*\s*/i, '')        /* opening ``` fence */
-      .replace(/^---[\s\S]*?---\s*/m, '') /* first frontmatter block */
-      .replace(/^---[\s\S]*?---\s*/m, '') /* second block if double-wrapped */
-      .trim();
+    const bodyForExcerpt = sanitizedContent;
     const excerptForManifest = excerpt || bodyForExcerpt
       .replace(/^#{1,6}\s+.+$/gm, '')
       .replace(/[*_`#>\[\]!]/g, '')
@@ -295,6 +292,34 @@ function httpGet(url, headers) {
     req.on('error', reject);
     req.end();
   });
+}
+
+/* --------------------------------------------------------
+   Sanitize raw Claude output — strip code fences, embedded
+   frontmatter blocks, and loose frontmatter key-value lines
+   that Claude sometimes includes in its response body.
+   -------------------------------------------------------- */
+function sanitizeClaudeOutput(raw) {
+  let text = (raw || '').trim();
+
+  // 1. Unwrap outer markdown code fences (```markdown ... ``` or ``` ... ```)
+  text = text.replace(/^```+(?:markdown|md)?\s*\n([\s\S]*?)\n?```+\s*$/i, '$1').trim();
+
+  // 2. Strip any YAML frontmatter blocks (---\n...\n---) embedded in the body.
+  //    Handles single or multiple blocks, including double-wrapped output.
+  text = text.replace(/(?:^|\n)(---[ \t]*\n[\s\S]*?\n---[ \t]*\n?)/g, '\n');
+
+  // 3. Strip loose frontmatter key-value lines that appear outside delimiters.
+  //    Catches cases where Claude emits raw frontmatter without --- wrappers.
+  text = text.replace(
+    /^(?:title|slug|date|category|tags|excerpt|metaDescription|author|readTime|description|keywords)\s*:[ \t]*.*$/gim,
+    ''
+  );
+
+  // 4. Collapse runs of 3+ blank lines down to 2
+  text = text.replace(/\n{3,}/g, '\n\n');
+
+  return text.trim();
 }
 
 /* --------------------------------------------------------
