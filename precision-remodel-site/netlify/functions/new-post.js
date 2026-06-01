@@ -1,314 +1,233 @@
-/**
- * Netlify Function: new-post
- * POST /api/new-post
- *
- * Accepts { title, slug, content, category, tags, date, rowNumber } and writes a markdown
- * file to /blog/posts/[slug].md, then triggers a Netlify deploy hook so the
- * new post becomes live. After successful deploy, calls Make.com webhook to
- * mark the Google Sheet row as PUBLISHED.
- *
- * Environment variables required:
- *   NETLIFY_DEPLOY_HOOK  — Your Netlify build hook URL
- *   NEW_POST_SECRET      — A secret token to protect this endpoint
- *   GITHUB_TOKEN         — GitHub personal access token
- *   GITHUB_REPO          — e.g. "precisionremodelmd-wq/precision-remodel-site"
- *   GITHUB_BRANCH        — defaults to "main"
- *   MAKE_WEBHOOK_URL     — Make.com webhook to mark sheet row PUBLISHED
- */
+/* ============================================================
+   Precision Remodel LLC — Main JS
+   precisionremodelingmd.com
+   ============================================================ */
 
-const https = require('https');
+(function () {
+  'use strict';
 
-exports.handler = async (event) => {
-  /* Only accept POST */
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+  /* --- Navigation ---------------------------------------- */
+  const nav = document.getElementById('nav');
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
 
-  /* Auth check */
-  const secret = process.env.NEW_POST_SECRET;
-  const authHeader = event.headers['x-post-secret'] || event.headers['authorization'];
-  if (secret && authHeader !== secret && authHeader !== `Bearer ${secret}`) {
-    return { statusCode: 401, body: 'Unauthorized' };
-  }
-
-  /* Parse body */
-  let data;
-  try {
-    data = JSON.parse(event.body);
-  } catch {
-    return { statusCode: 400, body: 'Invalid JSON body' };
-  }
-
-  const { title, slug, content, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber } = data;
-
-  if (!title || !slug || !content) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Required fields: title, slug, content' }),
+  if (nav) {
+    const onScroll = () => {
+      nav.classList.toggle('nav--scrolled', window.scrollY > 60);
     };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
 
-  /* Sanitize slug */
-  const safeSlug = slug
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  const postDate = date || new Date().toISOString().split('T')[0];
-
-  /* Build frontmatter */
-  const tagList = Array.isArray(tags) ? tags.map(t => `"${t}"`).join(', ') : `"${tags}"`;
-  const wordCount = content.split(/\s+/).length;
-  const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
-
-  const markdown = `---
-title: "${title.replace(/"/g, '\\"')}"
-slug: "${safeSlug}"
-date: "${postDate}"
-category: "${category}"
-tags: [${tagList}]
-excerpt: "${excerpt.replace(/"/g, '\\"')}"
-metaDescription: "${metaDescription.replace(/"/g, '\\"')}"
-author: "Precision Remodel LLC"
-readTime: "${readTime}"
----
-
-${content.trim()}
-`;
-
-  /* --- Option A: GitHub API (production-recommended) --- */
-  const githubToken = process.env.GITHUB_TOKEN;
-  const githubRepo = process.env.GITHUB_REPO; /* e.g. "username/repo-name" */
-  const githubBranch = process.env.GITHUB_BRANCH || 'main';
-
-  if (githubToken && githubRepo) {
-    const filePath = `precision-remodel-site/blog/posts/${safeSlug}.md`;
-    const result = await githubWrite(githubToken, githubRepo, githubBranch, filePath, markdown);
-    if (!result.ok) {
-      return { statusCode: 500, body: JSON.stringify({ error: 'GitHub write failed', detail: result.error }) };
-    }
-
-    /* Update posts.json manifest (non-fatal if it fails) */
-    const bodyForExcerpt = content
-      .replace(/^```+\w*\s*/i, '')
-      .replace(/^---[\s\S]*?---\s*/m, '')
-      .replace(/^---[\s\S]*?---\s*/m, '')
-      .trim();
-    const excerptForManifest = excerpt || bodyForExcerpt
-      .replace(/^#{1,6}\s+.+$/gm, '')
-      .replace(/[*_`#>\[\]!]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 220);
-    await updatePostsManifest(githubToken, githubRepo, githubBranch, {
-      title,
-      slug: safeSlug,
-      date: postDate,
-      category,
-      excerpt: excerptForManifest,
-      readTime,
-      author: 'Precision Remodel LLC',
-    }).catch(() => { /* manifest update failure is non-fatal */ });
-
-    /* Write per-slug HTML page (reads post-template.html from repo so it stays in sync) */
-    await (async () => {
-      try {
-        const tmplHeaders = {
-          Authorization: `token ${githubToken}`,
-          'User-Agent': 'Precision-Remodel-CMS',
-          Accept: 'application/vnd.github.v3+json',
-        };
-        const tmplData = await httpGet(
-          `https://api.github.com/repos/${githubRepo}/contents/precision-remodel-site/blog/post-template.html`,
-          tmplHeaders
-        );
-        if (tmplData.content) {
-          const tmplHtml = Buffer.from(tmplData.content, 'base64').toString('utf8');
-          await githubWrite(githubToken, githubRepo, githubBranch, `precision-remodel-site/blog/${safeSlug}.html`, tmplHtml);
-        }
-      } catch { /* non-fatal */ }
-    })();
-
-    /* Trigger Netlify deploy hook */
-    await triggerDeploy();
-
-    /* Mark Google Sheet row as PUBLISHED via Make.com webhook */
-    if (rowNumber) {
-      await markPublished(rowNumber);
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: true, slug: safeSlug, url: `/blog/${safeSlug}` }),
-    };
-  }
-
-  /* --- Option B: Local filesystem (netlify dev only) --- */
-  try {
-    const fs = require('fs');
-    const path = require('path');
-    /* __dirname is precision-remodel-site/netlify/functions — two levels up = precision-remodel-site/ */
-    const siteRoot = path.resolve(__dirname, '..', '..');
-    const outPath = path.join(siteRoot, 'blog', 'posts', `${safeSlug}.md`);
-    fs.writeFileSync(outPath, markdown, 'utf8');
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: true, slug: safeSlug, note: 'Written locally — deploy manually or configure GITHUB_TOKEN + GITHUB_REPO for production.' }),
-    };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: 'Filesystem write failed. In production, set GITHUB_TOKEN and GITHUB_REPO environment variables. See README.',
-        detail: err.message,
-      }),
-    };
-  }
-};
-
-/* --------------------------------------------------------
-   Update blog/posts.json manifest (newest post first)
-   -------------------------------------------------------- */
-async function updatePostsManifest(token, repo, branch, newPost) {
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/precision-remodel-site/posts.json`;
-  const headers = {
-    Authorization: `token ${token}`,
-    'User-Agent': 'Precision-Remodel-CMS',
-    Accept: 'application/vnd.github.v3+json',
-  };
-
-  let posts = [];
-  try {
-    const existing = await httpGet(apiUrl, headers);
-    if (existing.content) {
-      const decoded = Buffer.from(existing.content, 'base64').toString('utf8');
-      posts = JSON.parse(decoded);
-    }
-  } catch { /* file doesn't exist yet — start fresh */ }
-
-  /* Remove any existing entry with the same slug (re-publish case) */
-  posts = posts.filter(p => p.slug !== newPost.slug);
-  /* Prepend new post so newest is first */
-  posts.unshift(newPost);
-
-  return githubWrite(token, repo, branch, 'precision-remodel-site/posts.json', JSON.stringify(posts, null, 2));
-}
-
-/* --------------------------------------------------------
-   Mark Google Sheet row PUBLISHED via Make.com webhook
-   -------------------------------------------------------- */
-async function markPublished(rowNumber) {
-  const webhookUrl = process.env.MAKE_WEBHOOK_URL ||
-    'https://hook.us2.make.com/38xt6c5mh71a16iybmn8a7595d2cxght';
-  return new Promise(resolve => {
-    const body = JSON.stringify({ rowNumber });
-    const u = new URL(webhookUrl);
-    const options = {
-      hostname: u.hostname,
-      path: u.pathname,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body),
-      },
-    };
-    const req = https.request(options, res => {
-      res.on('data', () => {});
-      res.on('end', resolve);
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+      navToggle.setAttribute('aria-expanded', isOpen);
     });
-    req.on('error', resolve); /* non-fatal — don't fail the whole request */
-    req.write(body);
-    req.end();
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        document.body.style.overflow = '';
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  /* Active nav link */
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/index.html';
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    const href = link.getAttribute('href').replace(/\/$/, '');
+    if (href === currentPath || (currentPath === '' && href === '/index.html')) {
+      link.classList.add('active');
+    }
   });
-}
 
-/* --------------------------------------------------------
-   GitHub API helper — creates or updates a file in the repo
-   -------------------------------------------------------- */
-async function githubWrite(token, repo, branch, filePath, content) {
-  const encoded = Buffer.from(content).toString('base64');
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
-
-  /* Check if file already exists (to get its SHA for update) */
-  let sha = null;
-  try {
-    const existing = await httpGet(apiUrl, {
-      Authorization: `token ${token}`,
-      'User-Agent': 'Precision-Remodel-CMS',
-      Accept: 'application/vnd.github.v3+json',
+  /* --- FAQ Accordion ------------------------------------- */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
     });
-    if (existing.sha) sha = existing.sha;
-  } catch { /* file doesn't exist yet — that's fine */ }
+  });
 
-  const body = {
-    message: `Add blog post: ${filePath}`,
-    content: encoded,
-    branch,
-    ...(sha ? { sha } : {}),
-  };
+  /* --- Portfolio Filter ---------------------------------- */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const portfolioItems = document.querySelectorAll('.portfolio-item');
 
-  return new Promise(resolve => {
-    const url = new URL(apiUrl);
-    const options = {
-      hostname: url.hostname,
-      path: url.pathname,
-      method: 'PUT',
-      headers: {
-        Authorization: `token ${token}`,
-        'User-Agent': 'Precision-Remodel-CMS',
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-    };
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    const req = https.request(options, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve({ ok: true });
+      const filter = btn.dataset.filter;
+      portfolioItems.forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.classList.remove('hidden');
         } else {
-          resolve({ ok: false, error: data });
+          item.classList.add('hidden');
         }
       });
     });
-
-    req.on('error', err => resolve({ ok: false, error: err.message }));
-    req.write(JSON.stringify(body));
-    req.end();
   });
-}
 
-function httpGet(url, headers) {
-  return new Promise((resolve, reject) => {
-    const u = new URL(url);
-    const req = https.request({ hostname: u.hostname, path: u.pathname, method: 'GET', headers }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); } catch { resolve({}); }
-      });
+  /* --- Netlify Form Submission --------------------------- */
+  document.querySelectorAll('form[data-netlify]').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+      }
+
+      try {
+        const res = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(form)).toString(),
+        });
+
+        if (res.ok) {
+          form.style.display = 'none';
+          const success = document.getElementById(form.id + '-success') ||
+                          form.nextElementSibling;
+          if (success && success.classList.contains('form-success')) {
+            success.style.display = 'block';
+          }
+        } else {
+          throw new Error('Network response not ok');
+        }
+      } catch {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Try Again';
+        }
+        alert('Something went wrong. Please call us at 443-761-9209.');
+      }
     });
-    req.on('error', reject);
-    req.end();
   });
-}
 
-/* --------------------------------------------------------
-   Trigger a Netlify deploy hook
-   -------------------------------------------------------- */
-async function triggerDeploy() {
-  const hookUrl = process.env.NETLIFY_DEPLOY_HOOK;
-  if (!hookUrl) return;
-  return new Promise(resolve => {
-    const u = new URL(hookUrl);
-    const req = https.request({ hostname: u.hostname, path: u.pathname + u.search, method: 'POST' }, res => {
-      res.on('data', () => {});
-      res.on('end', resolve);
+  /* --- Scroll Animations --------------------------------- */
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  } else {
+    document.querySelectorAll('.fade-up').forEach(el => el.classList.add('in-view'));
+  }
+
+  /* --- Blog Post Renderer -------------------------------- */
+  const postBody = document.getElementById('post-body');
+  if (postBody) {
+    loadBlogPost();
+  }
+
+  async function loadBlogPost() {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const slug = segments[segments.length - 1] || new URLSearchParams(window.location.search).get('slug');
+
+    if (!slug) {
+      postBody.innerHTML = '<p class="loading">Post not found.</p>';
+      return;
+    }
+
+    try {
+      const res = await fetch(`/blog/posts/${slug}.md`);
+      if (!res.ok) throw new Error('Not found');
+      const raw = await res.text();
+      renderPost(raw, slug);
+    } catch {
+      postBody.innerHTML = '<p class="loading">Could not load post. <a href="/blog/">Return to blog</a></p>';
+    }
+  }
+
+  function renderPost(raw, slug) {
+    const { meta, content } = parseFrontmatter(raw);
+
+    /* Update page metadata */
+    document.title = (meta.title || 'Blog') + ' | Precision Remodel LLC';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && meta.metaDescription) metaDesc.content = meta.metaDescription;
+
+    /* Populate hero */
+    const titleEl = document.getElementById('post-title');
+    const categoryEl = document.getElementById('post-category');
+    const dateEl = document.getElementById('post-date');
+    const readEl = document.getElementById('post-read');
+
+    if (titleEl) titleEl.textContent = meta.title || '';
+    if (categoryEl) categoryEl.textContent = meta.category || '';
+    if (dateEl) dateEl.textContent = formatDate(meta.date);
+    if (readEl) readEl.textContent = meta.readTime || '';
+
+    /* Hero image based on category */
+    const heroImg = document.getElementById('post-hero-img');
+    const heroImgEl = document.getElementById('post-hero-img-el');
+    if (heroImg && heroImgEl) {
+      const cat = (meta.category || '').toLowerCase();
+      heroImgEl.src = cat.includes('kitchen')
+        ? '/images/projects/kitchen-perry-hall-after.png'
+        : cat.includes('bathroom')
+        ? '/images/projects/bathroom-sparrows-point-after.jpg'
+        : '/images/projects/kitchen-stevenson-after-1.jpg';
+      heroImgEl.alt = (meta.title || 'Project photo') + ' — Precision Remodel LLC';
+      heroImg.removeAttribute('style');
+    }
+
+    /* Render markdown (basic; marked.js loaded in template) */
+    if (window.marked) {
+      postBody.innerHTML = window.marked.parse(content);
+    } else {
+      postBody.innerHTML = '<p>' + content.replace(/\n\n/g, '</p><p>') + '</p>';
+    }
+  }
+
+  function parseFrontmatter(raw) {
+    // Normalise line endings
+    const normalised = raw.replace(/\r\n/g, '\n').trim();
+
+    // Strip any leading code fence (```markdown or ```)
+    const stripped = normalised.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/i, '').trim();
+
+    const match = stripped.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+    if (!match) return { meta: {}, content: stripped };
+
+    const meta = {};
+    match[1].split('\n').forEach(line => {
+      const idx = line.indexOf(':');
+      if (idx === -1) return;
+      const key = line.slice(0, idx).trim();
+      let val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+      meta[key] = val;
     });
-    req.on('error', resolve);
-    req.end();
-  });
-}
+
+    // Strip any second/duplicate frontmatter block from content
+    let content = match[2].trim();
+    content = content.replace(/^---[\s\S]*?---\n?/, '').trim();
+
+    return { meta, content };
+  }
+
+  function formatDate(str) {
+    if (!str) return '';
+    const d = new Date(str + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+})();
