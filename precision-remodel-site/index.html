@@ -65,7 +65,22 @@
     .section-header { margin-bottom: 2.8rem; }
     .hero { position: relative; min-height: 560px; overflow: visible; border-bottom: 1px solid rgba(201,169,110,0.2); }
     .hero-left { padding-bottom: 48px; }
+    .home-thumb-grid { grid-template-columns: repeat(6, 1fr); }
+    .home-thumb-grid .home-thumb:nth-child(-n+3) { grid-column: span 2; }
+    .home-thumb-grid .home-thumb:nth-child(4) { grid-column: 2 / span 2; }
+    .home-thumb-grid .home-thumb:nth-child(5) { grid-column: 4 / span 2; }
     .section[aria-labelledby="portfolio-heading"] { padding-top: 40px; padding-bottom: 40px; margin-top: 60px; background: #0d0d0b; }
+    .fp-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .fp-img { width: 100%; height: 540px; object-fit: cover; display: block; }
+    .fp-body { padding: 4.5rem 4rem; display: flex; flex-direction: column; justify-content: center; background: #0d0d0b; }
+    .fp-price { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-style: italic; color: var(--accent); margin: 0.25rem 0 1.25rem; }
+    .fp-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; font-weight: 500; transition: opacity 0.2s ease; margin-top: 2rem; }
+    .fp-link:hover { opacity: 0.7; }
+    @media (max-width: 768px) {
+      .fp-grid { grid-template-columns: 1fr; }
+      .fp-img { height: 300px; }
+      .fp-body { padding: 2.5rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -226,11 +241,26 @@
                alt="Stevenson MD kitchen skylight and ceiling detail — open concept kitchen renovation by Precision Remodel LLC"
                loading="lazy">
         </a>
-        <a href="/our-work.html" class="home-thumb">
-          <img src="images/projects/bathroom-towson-after.jpg"
-               alt="Towson MD master bathroom renovation by Precision Remodel LLC — dual rainfall showers, frameless glass enclosure, penny tile floor, black fixtures"
-               loading="lazy">
-        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Project: Towson Master Bathroom -->
+  <section aria-labelledby="fp-heading" style="border-top:1px solid rgba(201,169,110,0.15);border-bottom:1px solid rgba(201,169,110,0.15);overflow:hidden;">
+    <div class="fp-grid">
+      <div style="overflow:hidden;">
+        <img src="images/projects/bathroom-towson-after.jpg"
+             class="fp-img"
+             alt="Towson MD master bathroom renovation by Precision Remodel LLC — dual rainfall showers, frameless glass enclosure, penny tile floor, built-in bench with ambient under-lighting, matte black fixtures"
+             loading="lazy">
+      </div>
+      <div class="fp-body">
+        <span class="section-label">Featured Project</span>
+        <h2 id="fp-heading" style="margin:0.75rem 0 0;font-size:clamp(1.75rem,3vw,2.75rem);">Towson Master Bathroom</h2>
+        <p class="fp-price">$42,000</p>
+        <div class="divider" style="margin:0 0 1.5rem;"></div>
+        <p style="font-size:0.9rem;line-height:1.8;color:var(--text-muted);">Full primary bath renovation for a Towson colonial — dual overhead rainfall showers in a frameless glass enclosure, penny tile floor with radiant heat underfoot, a built-in bench with ambient LED under-lighting, and matte black fixtures throughout. The kind of bathroom that earns its square footage every morning.</p>
+        <a href="/our-work.html" class="fp-link">View Our Work &rarr;</a>
       </div>
     </div>
   </section>
