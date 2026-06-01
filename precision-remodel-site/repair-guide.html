@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contractor Pricing &amp; Vetting Guide | NE Baltimore County | Precision Remodel LLC</title>
+  <meta name="description" content="Free repair cost guide for NE Baltimore County homeowners and investors. 29 common repairs with price ranges, contractor questions, and red flags. Built from 10+ years of active contracting.">
+  <link rel="canonical" href="https://precisionremodelingmd.com/repair-guide.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://precisionremodelingmd.com/repair-guide.html">
+  <meta property="og:title" content="Contractor Pricing &amp; Vetting Guide | Precision Remodel LLC">
+  <meta property="og:description" content="Free resource: 29 home repairs with real Baltimore County cost ranges, what to ask contractors, and red flags to watch for.">
+  <meta property="og:image" content="https://precisionremodelingmd.com/images/projects/kitchen-perry-hall-after.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="images/projects/kitchen-perry-hall-after.png">
+  <link rel="apple-touch-icon" href="images/projects/kitchen-perry-hall-after.png">
+  <style>
+    /* Guide header */
+    .guide-header { background: #0d0d0b; padding: 5rem 1.5rem 4rem; border-bottom: 1px solid rgba(201,169,110,0.2); }
+    .guide-header-inner { max-width: 760px; margin: 0 auto; }
+    .free-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(109,185,109,0.12); border: 1px solid rgba(109,185,109,0.3); color: #6db96d; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 2rem; margin-bottom: 1.25rem; }
+    /* Controls */
+    .guide-controls { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1.5rem; position: sticky; top: 60px; z-index: 10; }
+    .guide-controls-inner { max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem 0.75rem 2.75rem; color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color 0.2s ease; }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus { border-color: var(--accent); }
+    .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .chip { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.05em; padding: 0.35rem 0.875rem; border-radius: 2rem; cursor: pointer; transition: all 0.2s ease; font-family: var(--font-body); white-space: nowrap; }
+    .chip:hover { border-color: var(--accent); color: var(--text-secondary); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #0d0d0b; font-weight: 600; }
+    /* Grid */
+    .repair-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); padding: 0; }
+    /* Card */
+    .repair-card { background: var(--bg-primary); transition: background 0.2s ease; }
+    .repair-card:hover { background: var(--bg-secondary); }
+    .repair-card.open { background: var(--bg-card); }
+    .card-header { padding: 1.5rem; cursor: pointer; display: flex; flex-direction: column; gap: 0.75rem; user-select: none; }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+    .card-cat { display: flex; align-items: center; gap: 0.45rem; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .card-expand { color: var(--text-muted); font-size: 1.1rem; flex-shrink: 0; transition: transform 0.25s ease; line-height: 1; }
+    .repair-card.open .card-expand { transform: rotate(45deg); }
+    .card-title { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-primary); line-height: 1.3; }
+    .card-meta { display: flex; align-items: center; gap: 0.875rem; flex-wrap: wrap; }
+    .card-price { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
+    .urgency-badge { display: inline-flex; align-items: center; padding: 0.18rem 0.6rem; border-radius: 2rem; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.04em; }
+    .urgency-high { background: rgba(180,40,40,0.15); color: #e87070; }
+    .urgency-medium { background: rgba(180,130,40,0.15); color: #d4a84b; }
+    .urgency-low { background: rgba(60,130,60,0.15); color: #6db96d; }
+    /* Expanded body */
+    .card-body { display: none; padding: 0 1.5rem 1.5rem; border-top: 1px solid var(--border); }
+    .repair-card.open .card-body { display: block; }
+    .card-section { margin-top: 1.25rem; }
+    .card-section-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; font-weight: 600; }
+    .card-list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .card-list li { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1rem; position: relative; }
+    .card-list li::before { content: '–'; position: absolute; left: 0; color: var(--text-muted); }
+    .card-list.red-flags li::before { content: '–'; color: #e87070; }
+    .expert-note { background: rgba(201,169,110,0.06); border: 1px solid rgba(201,169,110,0.2); border-radius: var(--radius); padding: 0.875rem 1rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; margin-top: 1.25rem; }
+    .expert-note strong { color: var(--accent); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+    .card-cta { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--accent); font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin-top: 1.25rem; text-decoration: none; transition: opacity 0.2s ease; }
+    .card-cta:hover { opacity: 0.7; }
+    /* No results */
+    .no-results { text-align: center; padding: 4rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; display: none; }
+    /* Results count */
+    .results-count { font-size: 0.78rem; color: var(--text-muted); padding: 0.75rem 1.5rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+    /* Bottom CTA */
+    .guide-cta { background: #111110; border-top: 1px solid rgba(201,169,110,0.2); padding: 5rem 1.5rem; text-align: center; }
+    .guide-cta p { max-width: 52ch; margin: 0 auto 2rem; color: var(--text-secondary); }
+    /* Attribution */
+    .attribution { text-align: center; padding: 2rem 1.5rem; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+    .attribution a { color: var(--accent); }
+    @media (max-width: 900px) { .repair-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .repair-grid { grid-template-columns: 1fr; } .guide-controls { top: 0; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Precision Remodel LLC home">
+        <span class="nav-logo-name">Precision Remodel</span>
+        <span class="nav-logo-tag">MHIC #151439 · NE Baltimore County</span>
+      </a>
+      <ul class="nav-links" id="navLinks" role="menubar">
+        <li role="none"><a href="/kitchens.html" role="menuitem">Kitchens</a></li>
+        <li role="none"><a href="/bathrooms.html" role="menuitem">Bathrooms</a></li>
+        <li role="none"><a href="/our-work.html" role="menuitem">Our Work</a></li>
+        <li role="none"><a href="/process.html" role="menuitem">Process</a></li>
+        <li role="none"><a href="/about.html" role="menuitem">About</a></li>
+        <li role="none"><a href="/blog/index.html" role="menuitem">Blog</a></li>
+        <li role="none"><a href="tel:4437619209" class="nav-phone" role="menuitem"><svg class="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg><span class="nav-phone-num">443-761-9209</span></a></li>
+        <li role="none"><a href="/contact.html" class="nav-cta" role="menuitem">Book &middot; $99</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Guide Header -->
+  <section class="guide-header" aria-label="Guide overview">
+    <div class="guide-header-inner">
+      <div class="free-badge">Free Resource</div>
+      <h1 style="margin-bottom:1rem;">Contractor Pricing<br><em style="font-style:italic;">&amp; Vetting Guide</em></h1>
+      <p class="lead" style="margin-bottom:1.25rem;">29 common repairs — what's included, what it costs in NE Baltimore County, what to ask before you hire, and red flags to walk away from.</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);">Built from 10+ years of active contracting in NE Baltimore County. By Jonathan Kruse · Precision Remodel LLC · MHIC #151439</p>
+    </div>
+  </section>
+
+  <!-- Controls -->
+  <div class="guide-controls" role="search" aria-label="Filter repairs">
+    <div class="guide-controls-inner">
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search by repair, material, or keyword…" aria-label="Search repairs">
+      </div>
+      <div class="filter-chips" role="group" aria-label="Filter by category" id="filter-chips">
+        <button class="chip active" data-cat="all">All</button>
+        <button class="chip" data-cat="roof">Roof</button>
+        <button class="chip" data-cat="electrical">Electrical</button>
+        <button class="chip" data-cat="plumbing">Plumbing</button>
+        <button class="chip" data-cat="hvac">HVAC</button>
+        <button class="chip" data-cat="structural">Structural</button>
+        <button class="chip" data-cat="exterior">Exterior</button>
+        <button class="chip" data-cat="interior">Interior</button>
+        <button class="chip" data-cat="foundation">Foundation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results count -->
+  <div class="results-count" id="results-count" aria-live="polite"></div>
+
+  <!-- Repair Grid -->
+  <div class="repair-grid" id="repair-grid" role="list"></div>
+  <div class="no-results" id="no-results" role="status">No repairs match your search. Try a different keyword or category.</div>
+
+  <!-- Disclaimer -->
+  <div class="attribution">
+    Pricing reflects typical NE Baltimore County market costs and is provided for informational purposes only. Actual costs vary based on property condition, access, material selection, and current labor market. Always obtain multiple written quotes from licensed contractors. &nbsp;|&nbsp; <a href="/walkthrough.html">Get a written estimate from Precision Remodel &rarr;</a>
+  </div>
+
+  <!-- Bottom CTA -->
+  <section class="guide-cta" aria-labelledby="guide-cta-heading">
+    <span class="section-label">Next Step</span>
+    <h2 id="guide-cta-heading" style="margin:0.75rem 0 1rem;">Want a Written Estimate<br><em style="font-style:italic;">for Your Specific Property?</em></h2>
+    <p>A $99 property walkthrough gives you a prioritized repair list, contractor-grade cost estimates, and a maintenance timeline — specific to your home, from someone actively working in this market.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <a href="/contact.html" class="btn btn-primary">Book the $99 Walkthrough &rarr;</a>
+      <a href="/walkthrough.html" class="btn btn-outline">Learn More</a>
+    </div>
+    <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--text-muted);">Or call / text: <a href="tel:4437619209" style="color:var(--accent);">443-761-9209</a></p>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="nav-logo-name" style="display:block;margin-bottom:4px;">Precision Remodel LLC</span>
+          <span class="nav-logo-tag" style="display:block;">MHIC #151439 · NE Baltimore County</span>
+          <p>Luxury kitchen and bathroom remodeling for homeowners in Essex, White Marsh, Perry Hall, Towson, and surrounding NE Baltimore County communities.</p>
+          <div class="footer-contact">
+            <div class="footer-contact-item"><span class="lbl">Phone</span><a href="tel:4437619209">443-761-9209</a></div>
+            <div class="footer-contact-item"><span class="lbl">Email</span><a href="mailto:jon@precisionremodelingmd.com">jon@precisionremodelingmd.com</a></div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>
+          <ul>
+            <li><a href="/kitchens.html">Kitchen Remodeling</a></li>
+            <li><a href="/bathrooms.html">Bathroom Remodeling</a></li>
+            <li><a href="/walkthrough.html">$99 Property Walkthrough</a></li>
+            <li><a href="/contact.html">Free Consultation</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="/repair-guide.html">Repair Price Guide</a></li>
+            <li><a href="/investor.html">Investor Walkthrough</a></li>
+            <li><a href="/blog/index.html">Blog</a></li>
+            <li><a href="/about.html">About Jonathan</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Service Area</h5>
+          <ul>
+            <li><a href="/service-area.html">Essex &amp; Middle River</a></li>
+            <li><a href="/service-area.html">White Marsh &amp; Perry Hall</a></li>
+            <li><a href="/service-area.html">Towson &amp; Lutherville</a></li>
+            <li><a href="/service-area.html">Cockeysville &amp; Hunt Valley</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Precision Remodel LLC &middot; precisionremodelingmd.com &middot; NE Baltimore County, MD</p>
+        <span class="footer-license">MHIC #151439</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  (function() {
+    // ── Data ──────────────────────────────────────────────────────────────
+    var CATEGORIES = {
+      roof:       { label: "Roofing",    color: "#b8882a" },
+      electrical: { label: "Electrical", color: "#2563a8" },
+      plumbing:   { label: "Plumbing",   color: "#1d7a5f" },
+      hvac:       { label: "HVAC",       color: "#7c3ab8" },
+      structural: { label: "Structural", color: "#b42828" },
+      exterior:   { label: "Exterior",   color: "#5a7a3a" },
+      interior:   { label: "Interior",   color: "#8a6a2a" },
+      foundation: { label: "Foundation", color: "#4a4a6a" }
+    };
+
+    var REPAIRS = [
+      {
+        id: "roof-shingle-partial", category: "roof",
+        title: "Roof Shingle Replacement (Partial)",
+        price_range: "$800 – $2,200", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Remove and replace damaged or missing shingles","Re-nail surrounding field shingles","Replace underlayment in affected area","Inspect and seal flashing at penetrations","Clean up and haul debris"],
+        contractor_questions: ["What shingle brand and warranty are you installing?","Will you replace the underlayment or just the shingles?","Are you a licensed Maryland contractor?","Will this repair be visible from the ground — i.e. will it match?","What is your warranty on labor?"],
+        red_flags: ["Asks for full payment upfront before work starts","Does not pull a permit (required for full replacements)","Offers to use leftover shingles from another job","Quotes significantly below every other bid without explanation","Shows up after a storm unsolicited and pressures you to sign immediately"],
+        expert_note: "Partial repairs are appropriate for isolated damage. If more than 30% of the roof is compromised, a full replacement is typically more cost-effective."
+      },
+      {
+        id: "roof-shingle-full", category: "roof",
+        title: "Full Roof Replacement (Asphalt Shingle)",
+        price_range: "$8,000 – $18,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Full tear-off of existing shingles and underlayment","Inspect and replace damaged decking","Install ice-and-water shield at eaves and valleys","Install synthetic underlayment","Install new architectural shingles (30-year)","Replace all pipe boots, ridge vents, and flashing","Clean up magnetically for nails"],
+        contractor_questions: ["Are you pulling a permit with Baltimore County?","What is the manufacturer warranty on the shingles and who registers it?","Do you replace the decking as needed or charge extra?","What is your labor warranty?","Will the same crew be here start to finish or do you subcontract?","Can I see a certificate of insurance and workers comp coverage?"],
+        red_flags: ["Cannot produce a certificate of insurance on request","Does not pull a permit","Proposes to overlay new shingles on top of existing (usually not to code)","Asks for more than 30-40% upfront","Cannot provide references from recent Baltimore County jobs"],
+        expert_note: "Get three written quotes. Price swings significantly based on roof pitch, number of layers being removed, and decking condition. Never let a contractor skip the permit."
+      },
+      {
+        id: "roof-flashing", category: "roof",
+        title: "Flashing Repair (Chimney, Skylight, Valley)",
+        price_range: "$400 – $1,400", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Remove failed or corroded flashing","Install new step or counter flashing in lead or aluminum","Seal all penetrations with appropriate caulk or mortar","Inspect surrounding shingles for secondary damage"],
+        contractor_questions: ["What material are you using for the flashing — aluminum, lead, or step flashing kit?","Will you address the shingles immediately surrounding the repair?","Do you warranty this repair against leaks?","Is this the source of the leak or do you need to do further investigation first?"],
+        red_flags: ["Proposes to just caulk over existing flashing instead of replacing it","Cannot explain clearly why this specific location is the source of water entry","Quotes this job in five minutes without going on the roof"],
+        expert_note: "Flashing is the most common source of roof leaks. Caulk-only repairs are temporary — if a contractor is not replacing the flashing material, ask why."
+      },
+      {
+        id: "roof-gutters", category: "roof",
+        title: "Gutter Replacement",
+        price_range: "$1,200 – $3,800", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove existing gutters and downspouts","Install seamless aluminum gutters (typically 5\" or 6\" K-style)","Install downspouts with proper drainage extension","Pitch gutters correctly toward downspouts","Optional: gutter guard installation"],
+        contractor_questions: ["Are these seamless gutters fabricated on-site or sectional?","What gauge aluminum are you using?","How are the hangers attached — spikes or hidden screws?","Are you extending the downspouts away from the foundation?","Do you pitch the gutters for drainage or just hang them level?"],
+        red_flags: ["Installs sectional gutters with visible seams (more likely to leak)","Uses spike-and-ferrule hangers instead of hidden screws","Does not extend downspouts away from the foundation","Cannot explain how they will pitch the gutters properly"],
+        expert_note: "Gutters that drain toward the foundation are worse than no gutters. Always confirm downspout discharge location."
+      },
+      {
+        id: "electrical-panel", category: "electrical",
+        title: "Electrical Panel Replacement",
+        price_range: "$2,200 – $4,500", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Remove existing panel","Install new 200-amp service panel with breakers","Label all circuits","Coordinate with BGE for service disconnect if needed","Pull permit and schedule inspection with Baltimore County"],
+        contractor_questions: ["Are you a licensed Maryland master electrician?","Will you pull a permit and schedule the county inspection?","What panel brand are you installing — some brands have recall histories?","Will BGE need to disconnect service and how long will we be without power?","Does this include bringing the grounding system up to current code?"],
+        red_flags: ["Proposes to do panel work without pulling a permit","Cannot produce a Maryland electrician license number","Offers to reuse the existing breakers","Does not mention the county inspection step","Significantly the cheapest bid with no explanation"],
+        expert_note: "Certain panel brands (Federal Pacific, Zinsco, some older Pushmatic) are known safety concerns. If you have one, prioritize replacement. Always require a permit and inspection."
+      },
+      {
+        id: "electrical-gfci", category: "electrical",
+        title: "GFCI Outlet Installation",
+        price_range: "$180 – $380", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Install GFCI-protected outlets at all required locations (bathrooms, kitchen, garage, exterior)","Test each device for proper trip function","Label panel breaker if not already done"],
+        contractor_questions: ["Are you replacing outlets individually or using a GFCI breaker to protect the whole circuit?","Will you test each outlet after installation?","Are there any outlets downstream of these that also need to be verified?"],
+        red_flags: ["Installs standard outlets in wet locations and calls them protected","Does not test the trip function after installation","Cannot explain the difference between a GFCI outlet and a GFCI breaker"],
+        expert_note: "GFCI protection is required by code within 6 feet of any water source. Many older homes are missing it. This is an inexpensive fix with significant safety implications."
+      },
+      {
+        id: "electrical-knob-tube", category: "electrical",
+        title: "Knob and Tube Wiring Remediation",
+        price_range: "$4,000 – $15,000+", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Full assessment of existing knob-and-tube extent","Rewire affected circuits with modern Romex","Install new outlets, switches, and fixtures on updated circuits","Pull all required permits and pass inspection"],
+        contractor_questions: ["How much of the home contains active knob-and-tube — have you done a full assessment?","Will you be rewiring circuits fully or just splicing in new sections?","How does this affect my walls — will there be significant opening and patching?","Is the knob-and-tube currently covered by insulation (a fire hazard)?","Will you handle the permit and inspection process?"],
+        red_flags: ["Says the wiring is 'fine as long as it works'","Proposes to just splice modern wire onto existing knob-and-tube","Does not discuss the insulation-coverage issue","Cannot produce license and insurance","Gives a firm price without a thorough walk-through assessment"],
+        expert_note: "Insurance companies often refuse to insure or renew homes with active knob-and-tube wiring. If you are selling or refinancing, this will likely come up."
+      },
+      {
+        id: "electrical-smoke-co", category: "electrical",
+        title: "Whole-Home Smoke & CO Detector Installation",
+        price_range: "$400 – $900", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Install hardwired, interconnected smoke detectors per Maryland code","Install combination smoke/CO detectors on each level","Test interconnect function (all alarms sound when one triggers)","Replace any existing battery-only units in code-required locations"],
+        contractor_questions: ["Are these hardwired and interconnected, or battery only?","Where exactly are you placing them — Maryland code specifies locations?","Are the CO detectors combination units or standalone?","What brand are you installing and what is the sensor lifespan?"],
+        red_flags: ["Installs battery-only detectors where hardwired units are required","Places detectors based on convenience rather than code requirements","Cannot explain the interconnect requirement"],
+        expert_note: "Maryland law requires interconnected smoke detectors. If one goes off, all go off. Battery-only units in code-required locations are not compliant."
+      },
+      {
+        id: "plumbing-water-heater", category: "plumbing",
+        title: "Water Heater Replacement",
+        price_range: "$1,100 – $2,400", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove and dispose of existing unit","Install new tank water heater (40 or 50 gallon)","Connect gas or electric supply","Install expansion tank if required by code","Test for leaks and verify temperature pressure relief valve","Pull permit if required by jurisdiction"],
+        contractor_questions: ["What brand and efficiency rating are you installing?","Does this installation require a permit in Baltimore County?","Will you install an expansion tank — is my system a closed system?","What is the warranty on the unit and what is your labor warranty?","Are you testing the TPR valve and the anode rod?"],
+        red_flags: ["Does not mention the expansion tank (required on closed systems)","Proposes to install a unit without checking if a permit is needed","Cannot explain what a TPR valve is or why it matters","Significantly underpriced — may be installing a low-quality or second-hand unit"],
+        expert_note: "Average water heater lifespan is 8-12 years. If yours is approaching that range and showing signs of rust or inconsistent heating, proactive replacement avoids emergency failure."
+      },
+      {
+        id: "plumbing-drain-line", category: "plumbing",
+        title: "Drain Line Replacement (Galvanized or Clay)",
+        price_range: "$3,000 – $12,000", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Camera scope existing drain line to confirm condition","Excavate or access affected section","Remove and replace with PVC or cast iron to current code","Backfill and compact excavated areas","Restore surface (concrete, landscaping) as applicable"],
+        contractor_questions: ["Will you do a camera scope before quoting so I know exactly what I am paying for?","What material are you replacing with — PVC or cast iron?","How much disruption to the yard, driveway, or floor should I expect?","Will you pull a permit?","What does the warranty cover — parts, labor, or both?"],
+        red_flags: ["Quotes a full replacement without doing a camera scope first","Cannot explain why the existing material needs to be replaced vs. spot repaired","Does not pull a permit for below-grade work","Cannot produce a plumbing license"],
+        expert_note: "Galvanized and clay drain lines are common in Baltimore-area homes built before 1970. Scale buildup, corrosion, and root intrusion are the typical failure modes. A camera scope is non-negotiable before any major drain work."
+      },
+      {
+        id: "plumbing-sump", category: "plumbing",
+        title: "Sump Pump Installation or Replacement",
+        price_range: "$600 – $1,600", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove existing pump if replacing","Install submersible sump pump in existing pit","Install check valve on discharge line","Install battery backup pump (if requested)","Test operation by filling pit manually"],
+        contractor_questions: ["Is this a submersible pump or a pedestal — which do you recommend for my pit depth?","Are you including a check valve on the discharge line?","Do you recommend a battery backup system given my basement history?","Where does the discharge line terminate and is that location appropriate?","What is the GPH capacity of the unit you are installing?"],
+        red_flags: ["Installs a pedestal pump in a deep pit","Discharges the pump to the sanitary sewer (code violation in most jurisdictions)","Does not install a check valve","Cannot explain the difference between primary and backup pump systems"],
+        expert_note: "In Baltimore County, sump discharge to the sanitary sewer is typically prohibited. Discharge to daylight or a dry well is the correct approach. Ask specifically where the water goes."
+      },
+      {
+        id: "plumbing-fixture", category: "plumbing",
+        title: "Bathroom Fixture Replacement (Toilet, Sink, Faucet)",
+        price_range: "$300 – $1,200 per fixture", urgency: "low", urgency_label: "When Ready",
+        includes: ["Shut off supply, remove existing fixture","Inspect supply lines and shut-offs — replace if corroded","Install new fixture per manufacturer spec","Test for leaks at supply and drain connections","Caulk base of toilet or sink as applicable"],
+        contractor_questions: ["Are you replacing the supply lines and shut-off valves while you are in there?","Will you check the flange condition before installing the new toilet?","Is there any sign of leak damage at the existing base I should know about?","What brand fixture are you comfortable installing — or do I need to supply it?"],
+        red_flags: ["Reuses old supply lines with a new fixture","Does not inspect the toilet flange before installing","Does not check for subfloor damage around an existing toilet that has been leaking"],
+        expert_note: "A toilet that has been rocking or leaking at the base for any period of time almost certainly has subfloor damage. Do not let a contractor skip that inspection during a toilet replacement."
+      },
+      {
+        id: "hvac-full-system", category: "hvac",
+        title: "Central HVAC System Replacement (Furnace + AC)",
+        price_range: "$7,000 – $14,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove and dispose of existing furnace and condenser","Install matched furnace and air handler or condenser","Connect to existing ductwork","Charge refrigerant system","Pull permit and schedule county inspection","One-year parts and labor warranty (verify)"],
+        contractor_questions: ["What SEER rating is the AC unit and what AFUE is the furnace — what does that mean for my energy bills?","Are you installing a matched system from the same manufacturer?","Will you inspect the ductwork for leaks before connecting the new system?","Who handles the permit and county inspection?","What warranty does the manufacturer provide and does your company offer an extended labor warranty?","Are you EPA 608 certified to handle refrigerant?"],
+        red_flags: ["Cannot produce EPA 608 refrigerant certification","Does not pull a permit","Installs mismatched components from different manufacturers","Does not inspect existing ductwork before connecting","Gives a same-day quote without measuring the home for proper load sizing"],
+        expert_note: "An oversized or undersized system is a common and expensive contractor mistake. A proper Manual J load calculation should inform equipment sizing. Ask if they are doing one."
+      },
+      {
+        id: "hvac-furnace", category: "hvac",
+        title: "Furnace Replacement Only",
+        price_range: "$2,800 – $5,500", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove and dispose of existing furnace","Install new high-efficiency gas furnace (80% or 96% AFUE)","Connect to existing ductwork and flue","Test ignition, heat exchanger, and thermostat operation","Pull permit and schedule inspection"],
+        contractor_questions: ["Is the existing AC coil compatible with the new furnace or does that need to change too?","Are you inspecting the heat exchanger on the old unit — is that why it needs replacing?","What AFUE rating and does a 96% unit make sense for my home layout?","Will the flue venting need to change with a high-efficiency unit?"],
+        red_flags: ["Does not address the flue venting question when replacing with a high-efficiency unit","Cannot explain the AFUE rating difference and what it means","Does not pull a permit"],
+        expert_note: "High-efficiency 96% AFUE furnaces vent with PVC pipe through the wall rather than a traditional flue. This changes the installation significantly and affects cost."
+      },
+      {
+        id: "hvac-ductwork", category: "hvac",
+        title: "Ductwork Repair or Partial Replacement",
+        price_range: "$800 – $4,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Inspect existing ductwork for leaks, disconnection, and improper sizing","Seal leaks with mastic or approved tape","Replace failed flexible duct sections","Insulate ducts in unconditioned spaces per code","Rebalance dampers if accessible"],
+        contractor_questions: ["How are you identifying where the leaks are — visually or with a blower door test?","Are you using mastic sealant or tape — mastic is preferred for long-term performance?","Is any ductwork running through unconditioned space uninsulated?","After repairs, will you do a test to confirm the improvement?"],
+        red_flags: ["Uses standard duct tape (not foil tape or mastic) to seal ducts","Does not inspect the full duct run before quoting","Cannot explain the difference between flex duct and hard pipe and when each is appropriate"],
+        expert_note: "Leaky ductwork can waste 25-30% of your conditioned air. In Baltimore County homes with ductwork in unconditioned crawl spaces or attics, this is one of the highest-impact energy improvements available."
+      },
+      {
+        id: "structural-load-bearing-wall", category: "structural",
+        title: "Load-Bearing Wall Removal",
+        price_range: "$3,500 – $9,000", urgency: "low", urgency_label: "When Ready",
+        includes: ["Structural assessment to confirm load path","Engineer-stamped drawings (if required by permit office)","Temporary shoring during beam installation","Install appropriately sized header beam (LVL or steel)","Patch ceiling, floor, and adjacent walls","Pull permit and schedule county inspection"],
+        contractor_questions: ["How are you confirming this wall is load-bearing before we start?","Will an engineer be involved — and will their drawings be stamped?","What size beam are you installing and how did you arrive at that size?","Are you pulling a permit — this is required in Baltimore County?","What does the post-removal patch and finish work include?"],
+        red_flags: ["Agrees to remove a wall without confirming load path or calling for an engineer","Proposes to use dimensional lumber instead of LVL or steel for a significant span","Does not pull a permit","Cannot explain how the load is being transferred to the foundation after the wall is removed"],
+        expert_note: "Unpermitted structural work is a serious issue at resale. Any buyer doing due diligence will identify it. Always require a permit for this scope."
+      },
+      {
+        id: "structural-deck", category: "structural",
+        title: "Deck Repair or Partial Replacement",
+        price_range: "$1,500 – $6,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Inspect ledger board attachment and flashing","Replace rotted decking boards","Replace corroded or failing hardware (joist hangers, bolts, fasteners)","Reinforce or replace posts and footings as needed","Apply preservative treatment or paint/stain"],
+        contractor_questions: ["How is the ledger board attached to the house and is there proper flashing?","Are the posts sitting on footings that extend below frost depth?","What hardware are you using — is it rated for exterior and ground contact?","Is any of the framing rotted or is this just a decking surface replacement?","Are you pulling a permit?"],
+        red_flags: ["Does not inspect the ledger board attachment","Proposes to sister new boards onto rotted framing instead of replacing the framing","Uses interior-grade fasteners on an exterior application","Does not pull a permit (required for structural deck work in Baltimore County)"],
+        expert_note: "The ledger board — where the deck attaches to the house — is the most critical connection and the most commonly failed one. Do not let a contractor skip that inspection."
+      },
+      {
+        id: "structural-sister-joist", category: "structural",
+        title: "Sister Joist Repair (Floor Joist Reinforcement)",
+        price_range: "$800 – $3,500", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Access floor joists from below (crawl or basement)","Sister new dimensional lumber alongside damaged joists","Fasten per code requirements throughout full joist length","Address source of moisture or pest damage causing the original failure","Treat new lumber with preservative if in damp environment"],
+        contractor_questions: ["What caused the original joist failure — moisture, pests, or overloading?","Are you addressing the root cause or just the symptom?","Will you sister the full length of the joist or just the damaged section?","Is the existing bearing at each end still solid?","Should I have a pest inspection before or after this repair?"],
+        red_flags: ["Proposes a short sister that does not reach the full bearing points on each end","Does not investigate or address the cause of the damage","Overlooks adjacent joists that may also be compromised","Does not treat for moisture or suggest moisture remediation"],
+        expert_note: "Sistering treats the symptom. If there is active moisture, rot, or pest activity, it will reoccur. Always identify and resolve the source before structural repair."
+      },
+      {
+        id: "exterior-paint", category: "exterior",
+        title: "Exterior Paint (Full House)",
+        price_range: "$3,500 – $9,000", urgency: "low", urgency_label: "When Ready",
+        includes: ["Pressure wash all surfaces","Scrape and sand all peeling or failing paint","Prime bare wood and repaired areas","Caulk all gaps at trim, windows, and penetrations","Apply two coats of exterior paint","Replace or caulk any deteriorated caulk joints"],
+        contractor_questions: ["What prep work is included — scraping, sanding, and priming bare areas?","What paint brand and product line are you using?","How many coats are included?","Are you caulking all the gaps before painting?","What is your warranty on the finished work?"],
+        red_flags: ["Proposes to paint over peeling or failing paint without scraping","Does not prime bare wood before applying finish coats","Uses a low-end paint product without explanation","Cannot explain why paint is failing in the first place"],
+        expert_note: "Paint failure is almost always a symptom of a moisture problem — not a paint problem. If the same areas keep peeling, investigate the moisture source before repainting."
+      },
+      {
+        id: "exterior-siding", category: "exterior",
+        title: "Siding Replacement (Partial or Full)",
+        price_range: "$4,000 – $18,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove existing siding and inspect sheathing underneath","Replace damaged sheathing as needed","Install housewrap per current code","Install new siding (vinyl, fiber cement, or wood)","Flash all windows, doors, and penetrations","Caulk and finish trim"],
+        contractor_questions: ["What material are you recommending and why — vinyl, fiber cement, or wood?","Will you inspect the sheathing and housewrap underneath when the old siding comes off?","How are you flashing the windows — will you integrate with the existing window flashing?","Do you pull a permit for this scope in Baltimore County?","What is the warranty on the siding product and your labor?"],
+        red_flags: ["Installs new siding directly over existing without inspecting or replacing housewrap","Does not properly flash at windows and doors","Cannot explain the difference between the siding materials they are proposing"],
+        expert_note: "Windows are the most common failure point in new siding installations. How a contractor integrates new siding with existing window flashing is the single most important quality indicator."
+      },
+      {
+        id: "exterior-windows", category: "exterior",
+        title: "Window Replacement (Per Window)",
+        price_range: "$400 – $1,100 per window", urgency: "low", urgency_label: "When Ready",
+        includes: ["Remove existing window unit","Inspect rough opening and sill for rot or moisture damage","Install new insert or full-frame replacement window","Flash and seal per manufacturer requirements","Interior and exterior trim repair","Confirm operation, lock function, and weatherstripping"],
+        contractor_questions: ["Is this an insert replacement or full-frame — what are you recommending and why?","What is the U-factor and SHGC of the window you are installing?","Will you inspect the rough opening for rot before installing?","How are you flashing the exterior — what is your method?","What is the window brand warranty and what is your labor warranty?"],
+        red_flags: ["Proposes insert windows without checking rough opening condition","Cannot explain the difference between insert and full-frame replacement","Does not address flashing at the exterior","Installs windows with no exterior caulking or flashing integration"],
+        expert_note: "Insert replacement windows leave the existing frame in place. This is faster and less expensive but leaves any existing frame rot unaddressed. If the frames are compromised, a full-frame replacement is the correct solution."
+      },
+      {
+        id: "exterior-driveway", category: "exterior",
+        title: "Driveway Replacement (Asphalt)",
+        price_range: "$2,500 – $7,000", urgency: "low", urgency_label: "When Ready",
+        includes: ["Remove and haul existing asphalt","Grade and compact base aggregate","Install 2-3 inch compacted asphalt base course","Apply finish course and compact","Establish proper drainage slope away from structure"],
+        contractor_questions: ["How thick will the total asphalt depth be after compaction?","How are you handling drainage — where does water run after installation?","How long before I can drive on it?","Are you using a sub-base of compacted gravel or going directly on soil?","How long is your warranty against cracking or sinking?"],
+        red_flags: ["Installs asphalt without addressing drainage","Cannot explain the base preparation process","Offers a price that seems impossibly low — thin asphalt or inadequate base is the usual explanation","Asks for full payment before the job is done"],
+        expert_note: "The base preparation matters as much as the asphalt itself. In Maryland, the freeze-thaw cycle is brutal on improperly prepared driveways. Ask specifically about the base course depth and compaction process."
+      },
+      {
+        id: "interior-bathroom", category: "interior",
+        title: "Bathroom Remodel (Full)",
+        price_range: "$12,000 – $35,000", urgency: "low", urgency_label: "When Ready",
+        includes: ["Demo existing tile, fixtures, and vanity","Inspect and address subfloor and backer issues","Rough plumbing and electrical updates as needed","Tile shower or tub surround","Install new vanity, toilet, and fixtures","Paint, trim, and finish work"],
+        contractor_questions: ["Will you inspect and address the subfloor before tiling?","What backer board system are you using in the shower — cement board, Schluter, or similar?","Are you waterproofing the shower niche and pan — what system?","How are you handling the existing plumbing supply lines?","Will you pull permits for the plumbing and electrical portions?","What is your written warranty on labor?"],
+        red_flags: ["Does not address subfloor condition before tiling","Uses drywall in wet areas instead of appropriate backer","Does not waterproof the shower pan and niche","Cannot explain their waterproofing system","Does not pull permits for plumbing and electrical work"],
+        expert_note: "Shower failures from improper waterproofing are one of the most common and expensive hidden defects in remodeled bathrooms. Ask specifically what waterproofing system is being used and how it is applied."
+      },
+      {
+        id: "interior-kitchen", category: "interior",
+        title: "Kitchen Remodel (Mid-Range)",
+        price_range: "$25,000 – $55,000", urgency: "low", urgency_label: "When Ready",
+        includes: ["Demo existing cabinets and countertops","Address any plumbing, electrical, or structural changes","Install new cabinetry (semi-custom or custom)","Install countertops (quartz or stone)","Tile backsplash","New sink, faucet, and disposal","Paint and trim finish work"],
+        contractor_questions: ["Are the cabinets you are proposing semi-custom or stock — what is the lead time?","What countertop material and brand are you specifying?","Are any walls in this scope load-bearing and have you confirmed that?","What electrical updates are required and are you pulling a permit?","Do you use your own tile installer or subcontract that trade?","What is included in your warranty and for how long?"],
+        red_flags: ["Proposes layout changes involving walls without confirming structural status","Does not address electrical panel capacity for new appliances","Cannot explain the difference between stock, semi-custom, and custom cabinetry","Subcontracts every trade without disclosing it","Does not pull permits for electrical and plumbing work"],
+        expert_note: "The cabinet order is the long pole in the tent for any kitchen remodel. Confirm lead times before signing anything — semi-custom cabinets can take 6-10 weeks."
+      },
+      {
+        id: "interior-hardwood", category: "interior",
+        title: "Hardwood Floor Installation",
+        price_range: "$6 – $14 per sq ft installed", urgency: "low", urgency_label: "When Ready",
+        includes: ["Acclimate flooring material to home environment (minimum 72 hours)","Prepare subfloor — flat to 3/16\" over 10 feet","Install hardwood with appropriate fasteners or adhesive","Sand and finish (site-finished) or install pre-finished","Install transitions and shoe molding","Clean and protect finished surface"],
+        contractor_questions: ["How long will the flooring acclimate before installation?","What is the moisture content of the subfloor and the flooring material — are they compatible?","Is this site-finished or pre-finished and what are the tradeoffs?","What species and grade of wood are you proposing?","How are you handling the transition to adjacent rooms?","What maintenance does the finished floor require?"],
+        red_flags: ["Does not acclimate the flooring before installation","Does not measure subfloor moisture","Does not level the subfloor before installing","Cannot explain the difference between site-finished and pre-finished"],
+        expert_note: "Hardwood and moisture are a difficult combination in Maryland. Subfloor moisture testing before installation is non-negotiable — skipping it leads to cupping, buckling, and gaps."
+      },
+      {
+        id: "interior-drywall", category: "interior",
+        title: "Drywall Repair (Water Damage or Hole)",
+        price_range: "$300 – $1,500", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Identify and confirm source of water damage is resolved","Remove damaged drywall","Inspect and treat framing for mold if present","Install new drywall and tape","Feather and finish to blend with existing texture","Prime and paint to match"],
+        contractor_questions: ["Have you confirmed the source of the water damage is fixed — or are you patching over an active problem?","Is there any mold on the framing behind this drywall?","Can you match my existing wall texture?","How many coats of finish compound will you apply?","Does this include paint?"],
+        red_flags: ["Patches drywall without addressing the source of the original water damage","Does not inspect the framing behind wet drywall for mold","Cannot texture-match and does not disclose this upfront","Single coat of compound (three coats minimum for a quality finish)"],
+        expert_note: "Drywall repair is easy. Patching over an unresolved moisture source is how a $400 repair becomes a $4,000 mold remediation. Confirm the source is fixed before any patch work begins."
+      },
+      {
+        id: "foundation-waterproofing", category: "foundation",
+        title: "Basement Waterproofing (Interior System)",
+        price_range: "$6,000 – $18,000", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Break concrete along perimeter","Install interior drain tile system","Install sump pit and pump","Seal walls with hydraulic cement or crystalline coating","Repair and patch concrete floor","Warranty typically transferable to subsequent owners"],
+        contractor_questions: ["Is this addressing the source of water entry or redirecting it after it enters?","What is the sump pump brand and GPH capacity?","Does this include a battery backup system?","Is the warranty transferable to the next owner if I sell?","Are you a licensed Maryland contractor?","Can I see references from similar jobs in my area within the past two years?"],
+        red_flags: ["Claims to permanently stop water from entering rather than managing it","Does not include a sump pump with adequate capacity for your water volume","Cannot provide a transferable warranty in writing","High-pressure sales tactics — 'this price is only good today'","National franchise company subcontracting to local crews with no local references"],
+        expert_note: "Interior waterproofing manages water after it enters — it does not stop it at the source. For exterior waterproofing (excavation and membrane), expect $15,000-$40,000+. Most homeowners choose interior systems for cost reasons. Both are valid depending on circumstances."
+      },
+      {
+        id: "foundation-crack", category: "foundation",
+        title: "Foundation Crack Repair",
+        price_range: "$400 – $3,500", urgency: "high", urgency_label: "Act Soon",
+        includes: ["Assess crack type — vertical, horizontal, or diagonal — and severity","Determine if crack is active or dormant","Inject with polyurethane or epoxy as appropriate","Seal exterior face if accessible","Monitor recommendation for active cracks"],
+        contractor_questions: ["Is this crack active — meaning it is still moving — or has it stabilized?","What does horizontal cracking along a block wall indicate structurally?","Are you injecting from the interior only or also addressing the exterior?","What material are you injecting — polyurethane or epoxy — and what is the difference?","At what point does this crack require a structural engineer rather than just a repair?"],
+        red_flags: ["Dismisses a horizontal crack in a block wall without a structural conversation","Proposes to simply cover the crack with hydraulic cement without injecting it","Cannot explain the difference between active and dormant cracks","Does not recommend engineer involvement for step cracks or horizontal cracks with inward bowing"],
+        expert_note: "Horizontal cracks in block foundation walls — especially with any inward bowing — indicate lateral soil pressure and are a structural concern, not just a waterproofing concern. An engineer should be involved."
+      },
+      {
+        id: "foundation-crawlspace", category: "foundation",
+        title: "Crawl Space Encapsulation",
+        price_range: "$4,000 – $12,000", urgency: "medium", urgency_label: "Plan Ahead",
+        includes: ["Remove existing debris and failed vapor barrier","Apply 20-mil reinforced polyethylene liner to floor and walls","Seal all vents and penetrations","Install drainage matting and sump if needed","Install conditioned air supply or dehumidifier to maintain dry conditions","Optional: insulate foundation walls"],
+        contractor_questions: ["What thickness liner are you installing and is it reinforced?","How are you handling the existing foundation vents — sealing them or leaving them open?","Are you conditioning this space after encapsulation — how?","Will there be a sump and dehumidifier included?","What is the warranty on the liner and the labor?"],
+        red_flags: ["Installs a thin 6-mil liner and calls it encapsulation","Leaves foundation vents open after encapsulation (defeats the purpose)","Does not address moisture source or install a dehumidifier","Cannot explain the difference between a vented and conditioned crawl space"],
+        expert_note: "A properly encapsulated crawl space should be conditioned — either with a supply of conditioned air or a dedicated dehumidifier. Without that, you are trapping moisture inside a sealed space, which creates a different problem."
+      }
+    ];
+
+    // ── State ─────────────────────────────────────────────────────────────
+    var activeCat = 'all';
+    var searchQuery = '';
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function urgencyClass(u) {
+      return u === 'high' ? 'urgency-high' : u === 'medium' ? 'urgency-medium' : 'urgency-low';
+    }
+
+    function listItems(arr, cls) {
+      return arr.map(function(item) {
+        return '<li>' + escHtml(item) + '</li>';
+      }).join('');
+    }
+
+    function cardHTML(r) {
+      var cat = CATEGORIES[r.category] || { label: r.category, color: '#888' };
+      return '<div class="repair-card" data-id="' + escHtml(r.id) + '" role="listitem">' +
+        '<div class="card-header" role="button" tabindex="0" aria-expanded="false" aria-controls="body-' + escHtml(r.id) + '">' +
+          '<div class="card-top">' +
+            '<div class="card-cat">' +
+              '<span class="cat-dot" style="background:' + escHtml(cat.color) + ';" aria-hidden="true"></span>' +
+              escHtml(cat.label) +
+            '</div>' +
+            '<span class="card-expand" aria-hidden="true">+</span>' +
+          '</div>' +
+          '<div class="card-title">' + escHtml(r.title) + '</div>' +
+          '<div class="card-meta">' +
+            '<span class="card-price">' + escHtml(r.price_range) + '</span>' +
+            '<span class="urgency-badge ' + urgencyClass(r.urgency) + '">' + escHtml(r.urgency_label) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-body" id="body-' + escHtml(r.id) + '" aria-hidden="true">' +
+          '<div class="card-section">' +
+            '<div class="card-section-label">What\'s Included</div>' +
+            '<ul class="card-list">' + listItems(r.includes) + '</ul>' +
+          '</div>' +
+          '<div class="card-section">' +
+            '<div class="card-section-label">Questions to Ask Your Contractor</div>' +
+            '<ul class="card-list">' + listItems(r.contractor_questions) + '</ul>' +
+          '</div>' +
+          '<div class="card-section">' +
+            '<div class="card-section-label" style="color:#e87070;">Red Flags</div>' +
+            '<ul class="card-list red-flags">' + listItems(r.red_flags) + '</ul>' +
+          '</div>' +
+          '<div class="expert-note"><strong>Expert Note</strong>' + escHtml(r.expert_note) + '</div>' +
+          '<a href="/contact.html" class="card-cta">Get a Written Estimate &rarr;</a>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────
+    function getFiltered() {
+      return REPAIRS.filter(function(r) {
+        var catMatch = activeCat === 'all' || r.category === activeCat;
+        if (!catMatch) return false;
+        if (!searchQuery) return true;
+        var q = searchQuery;
+        return (
+          r.title.toLowerCase().indexOf(q) > -1 ||
+          r.expert_note.toLowerCase().indexOf(q) > -1 ||
+          r.includes.some(function(i) { return i.toLowerCase().indexOf(q) > -1; }) ||
+          r.contractor_questions.some(function(i) { return i.toLowerCase().indexOf(q) > -1; }) ||
+          (CATEGORIES[r.category] && CATEGORIES[r.category].label.toLowerCase().indexOf(q) > -1)
+        );
+      });
+    }
+
+    function render() {
+      var filtered = getFiltered();
+      var grid = document.getElementById('repair-grid');
+      var noResults = document.getElementById('no-results');
+      var count = document.getElementById('results-count');
+
+      grid.innerHTML = filtered.map(cardHTML).join('');
+      noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+      grid.style.display = filtered.length === 0 ? 'none' : '';
+      count.textContent = 'Showing ' + filtered.length + ' of ' + REPAIRS.length + ' repairs';
+
+      // Attach toggle handlers
+      grid.querySelectorAll('.card-header').forEach(function(header) {
+        header.addEventListener('click', function() { toggleCard(header.parentElement); });
+        header.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCard(header.parentElement); }
+        });
+      });
+    }
+
+    function toggleCard(card) {
+      var isOpen = card.classList.contains('open');
+      // Close all open cards
+      document.querySelectorAll('.repair-card.open').forEach(function(c) {
+        c.classList.remove('open');
+        var h = c.querySelector('.card-header');
+        var b = c.querySelector('.card-body');
+        if (h) h.setAttribute('aria-expanded', 'false');
+        if (b) b.setAttribute('aria-hidden', 'true');
+      });
+      if (!isOpen) {
+        card.classList.add('open');
+        var header = card.querySelector('.card-header');
+        var body = card.querySelector('.card-body');
+        if (header) header.setAttribute('aria-expanded', 'true');
+        if (body) body.setAttribute('aria-hidden', 'false');
+        // Scroll card into view if partly off-screen
+        setTimeout(function() {
+          var rect = card.getBoundingClientRect();
+          if (rect.top < 120) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }, 50);
+      }
+    }
+
+    // ── Controls ──────────────────────────────────────────────────────────
+    var searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', function() {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      render();
+    });
+
+    document.getElementById('filter-chips').addEventListener('click', function(e) {
+      var chip = e.target.closest('.chip');
+      if (!chip) return;
+      activeCat = chip.dataset.cat;
+      document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      render();
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    render();
+  })();
+  </script>
+</body>
+</html>
