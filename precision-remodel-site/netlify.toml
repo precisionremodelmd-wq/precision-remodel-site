@@ -5,11 +5,12 @@
 [build.environment]
   NODE_VERSION = "18"
 
-# Serve blog posts via the post template (URL rewrite)
+# Serve blog posts from their pre-rendered static HTML files
 [[redirects]]
   from = "/blog/:slug"
-  to = "/blog/post-template.html"
+  to = "/blog/:slug.html"
   status = 200
+  force = false
 
 # Redirect /blog (no trailing slash) to blog index
 [[redirects]]
