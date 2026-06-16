@@ -7,7 +7,7 @@ tags: []
 excerpt: ""
 metaDescription: ""
 author: "Precision Remodel LLC"
-readTime: "4 min read"
+readTime: "6 min read"
 ---
 
 # Custom Cabinetry vs Stock Cabinets: What Perry Hall Homeowners Need to Know
