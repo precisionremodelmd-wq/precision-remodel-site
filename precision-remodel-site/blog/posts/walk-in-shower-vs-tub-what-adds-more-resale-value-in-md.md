@@ -7,7 +7,7 @@ tags: []
 excerpt: "Deciding between a walk-in shower and a tub for your bathroom remodel? Here's what actually adds more resale value for Maryland homeowners in northeast Baltimore County."
 metaDescription: "Walk-in shower vs tub: which adds more resale value in Maryland? Honest analysis for northeast Baltimore County homeowners from a licensed Maryland contractor."
 author: "Precision Remodel LLC"
-readTime: "5 min read"
+readTime: "6 min read"
 ---
 
 # Walk-In Shower vs Tub: What Adds More Resale Value in Maryland?
