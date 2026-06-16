@@ -138,9 +138,12 @@ ${content.trim()}
     }).catch(() => { /* manifest update failure is non-fatal */ });
 
     /* Write static pre-rendered HTML page for this post */
-    await writeStaticPostHtml(githubToken, githubRepo, githubBranch, {
+    const htmlResult = await writeStaticPostHtml(githubToken, githubRepo, githubBranch, {
       safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent: content,
     });
+    if (!htmlResult.ok) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'HTML write failed', detail: htmlResult.error }) };
+    }
 
     /* Trigger Netlify deploy hook */
     await triggerDeploy();
@@ -488,7 +491,8 @@ async function writeStaticPostHtml(token, repo, branch, {
 </body>
 </html>`;
 
-  return githubWrite(token, repo, branch, `precision-remodel-site/blog/${safeSlug}.html`, html);
+  const result = await githubWrite(token, repo, branch, `precision-remodel-site/blog/${safeSlug}.html`, html);
+  return result;
 }
 
 /* --------------------------------------------------------
