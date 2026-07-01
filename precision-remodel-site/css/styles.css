@@ -1415,6 +1415,27 @@ footer {
 
 .post-body blockquote p { margin: 0; font-style: italic; font-size: 1.125rem; }
 
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.9rem;
+}
+.post-body th, .post-body td {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  color: var(--text-secondary);
+}
+.post-body th {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .post-cta {
   background: var(--bg-secondary);
   border: 1px solid var(--accent-dim);
