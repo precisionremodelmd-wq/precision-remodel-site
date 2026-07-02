@@ -199,6 +199,8 @@ p { color: var(--text-secondary); }
   border-radius: var(--radius);
   font-weight: 600 !important;
   letter-spacing: 0.04em !important;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-cta:hover { background: #d4b57c; color: #0d0d0b !important; }
