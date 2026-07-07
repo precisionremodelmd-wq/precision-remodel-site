@@ -216,8 +216,10 @@ async function updatePostsManifest(token, repo, branch, newPost) {
    Mark Google Sheet row PUBLISHED via Make.com webhook
    -------------------------------------------------------- */
 async function markPublished(rowNumber) {
-  const webhookUrl = process.env.MAKE_WEBHOOK_URL ||
-    'https://hook.us2.make.com/38xt6c5mh71a16iybmn8a7595d2cxght';
+  const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+  if (!webhookUrl) {
+    throw new Error('MAKE_WEBHOOK_URL environment variable is not set');
+  }
   return new Promise(resolve => {
     const body = JSON.stringify({ rowNumber });
     const u = new URL(webhookUrl);
