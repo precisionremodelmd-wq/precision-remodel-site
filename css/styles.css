@@ -10,7 +10,7 @@
   --bg-card: #1e1e1a;
   --text-primary: #f0ede8;
   --text-secondary: rgba(240, 237, 232, 0.55);
-  --text-muted: rgba(240, 237, 232, 0.35);
+  --text-muted: rgba(240, 237, 232, 0.5);
   --accent: #c9a96e;
   --accent-dim: rgba(201, 169, 110, 0.35);
   --border: rgba(240, 237, 232, 0.08);
@@ -761,8 +761,9 @@ p { color: var(--text-secondary); }
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--accent-dim);
+  border-color: var(--accent);
   background: #222218;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.35);
 }
 
 .form-group input::placeholder,
