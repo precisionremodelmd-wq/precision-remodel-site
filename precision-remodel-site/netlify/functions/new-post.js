@@ -63,21 +63,16 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON body' };
   }
 
-  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber, images = [] } = data;
+  if (data && data.action === 'update') {
+    return updatePost(data);
+  }
+
+  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', metaTitle = '', rowNumber, images = [] } = data;
 
   /* Optional job photos sent with the post: [{ filename, base64 }] → committed to /images/blog/.
      The site's CSP only allows its own images, so photos must live in the repo. */
-  if (!Array.isArray(images) || images.length > 8) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'images must be an array of at most 8 files' }) };
-  }
-  for (const img of images) {
-    if (!img || !/^[a-z0-9][a-z0-9-]{0,80}\.(jpg|jpeg|png|webp)$/.test(img.filename || '') || typeof img.base64 !== 'string') {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Each image needs a safe filename (a-z, 0-9, -) and base64 data' }) };
-    }
-    if (Buffer.byteLength(img.base64, 'base64') > 6 * 1024 * 1024) {
-      return { statusCode: 400, body: JSON.stringify({ error: `Image too large: ${img.filename}` }) };
-    }
-  }
+  const imgErr = validateImages(images);
+  if (imgErr) return { statusCode: 400, body: JSON.stringify({ error: imgErr }) };
 
   /* Strip code fences and duplicate frontmatter that Claude sometimes adds */
   const content = sanitizeClaudeOutput(rawContent);
@@ -110,7 +105,7 @@ category: "${category}"
 tags: [${tagList}]
 excerpt: "${excerpt.replace(/"/g, '\\"')}"
 metaDescription: "${metaDescription.replace(/"/g, '\\"')}"
-author: "Precision Remodel LLC"
+${metaTitle ? `metaTitle: "${metaTitle.replace(/"/g, '\\"')}"\n` : ''}author: "Precision Remodel LLC"
 readTime: "${readTime}"
 ---
 
@@ -162,7 +157,7 @@ ${content.trim()}
     /* Write static pre-rendered HTML page for this post */
     const firstImg = (content.match(/!\[[^\]]*\]\((\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp))/) || [])[1];
     const htmlResult = await writeStaticPostHtml(githubToken, githubRepo, githubBranch, {
-      safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent: content,
+      safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent: content,
       ogImage: firstImg ? `https://precisionremodelingmd.com${firstImg}` : null,
     });
     if (!htmlResult.ok) {
@@ -326,7 +321,7 @@ async function githubWrite(token, repo, branch, filePath, content, isBase64 = fa
 function httpGet(url, headers) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
-    const req = https.request({ hostname: u.hostname, path: u.pathname, method: 'GET', headers }, res => {
+    const req = https.request({ hostname: u.hostname, path: u.pathname + u.search, method: 'GET', headers }, res => {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => {
@@ -358,12 +353,17 @@ async function triggerDeploy() {
 /* --------------------------------------------------------
    Build and write a fully pre-rendered static HTML blog post
    -------------------------------------------------------- */
-async function writeStaticPostHtml(token, repo, branch, {
-  safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent, ogImage,
+async function writeStaticPostHtml(token, repo, branch, opts) {
+  const html = buildStaticPostHtml(opts);
+  return githubWrite(token, repo, branch, `precision-remodel-site/blog/${opts.safeSlug}.html`, html);
+}
+
+function buildStaticPostHtml({
+  safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent, ogImage,
 }) {
   const bodyHtml = markdownToHtml(sanitizedContent);
   const displayDate = formatPostDate(postDate);
-  const pageTitle = `${escapeHtml(title)} | Precision Remodel LLC`;
+  const pageTitle = metaTitle ? escapeHtml(metaTitle) : `${escapeHtml(title)} | Precision Remodel LLC`;
   const pageDesc = escapeHtml(metaDescription || excerpt || '');
   const canonicalUrl = `https://precisionremodelingmd.com/blog/${safeSlug}`;
 
@@ -397,7 +397,7 @@ async function writeStaticPostHtml(token, repo, branch, {
 
   <meta property="og:type" content="article">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:title" content="${escapeHtml(metaTitle || title)}">
   <meta property="og:description" content="${pageDesc}">
   <meta property="og:image" content="${escapeHtml(ogImage || 'https://precisionremodelingmd.com/images/projects/kitchen-perry-hall-after.png')}">
 
@@ -517,8 +517,7 @@ async function writeStaticPostHtml(token, repo, branch, {
 </body>
 </html>`;
 
-  const result = await githubWrite(token, repo, branch, `precision-remodel-site/blog/${safeSlug}.html`, html);
-  return result;
+  return html;
 }
 
 /* --------------------------------------------------------
@@ -685,3 +684,170 @@ function markdownToHtml(md) {
   });
   return result;
 }
+
+/* --------------------------------------------------------
+   Shared validation for photos sent with a post
+   -------------------------------------------------------- */
+function validateImages(images) {
+  if (!Array.isArray(images) || images.length > 8) return 'images must be an array of at most 8 files';
+  for (const img of images) {
+    if (!img || !/^[a-z0-9][a-z0-9-]{0,80}\.(jpg|jpeg|png|webp)$/.test(img.filename || '') || typeof img.base64 !== 'string') {
+      return 'Each image needs a safe filename (a-z, 0-9, -) and base64 data';
+    }
+    if (Buffer.byteLength(img.base64, 'base64') > 6 * 1024 * 1024) return `Image too large: ${img.filename}`;
+  }
+  return null;
+}
+
+/* --------------------------------------------------------
+   Update an existing post (approved in the SEO Command Center):
+   { action: "update", slug, metaTitle?, metaDescription?, title?,
+     images?: [{ filename, base64 }],
+     insertions?: [{ afterHeading, markdown: '![alt](/images/blog/x.jpg "caption")' }] }
+   Rewrites blog/posts/<slug>.md and re-renders blog/<slug>.html as a full static page
+   (older posts were client-rendered shells that Google saw as "Blog | ..." / "Loading…").
+   -------------------------------------------------------- */
+const FM_ORDER = ['title', 'slug', 'date', 'category', 'tags', 'excerpt', 'metaDescription', 'metaTitle', 'author', 'readTime'];
+const INSERT_RE = /^!\[[^\]\n]{0,200}\]\(\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp)(?:\s+"[^"\n]{0,300}")?\)$/;
+
+function parseFrontmatter(raw) {
+  const text = raw.replace(/\r\n/g, '\n');
+  const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  if (!m) return { fm: {}, raw: {}, body: text };
+  const fm = {}, rawVals = {};
+  for (const line of m[1].split('\n')) {
+    const kv = line.match(/^([A-Za-z_][\w]*):\s*(.*)$/);
+    if (!kv) continue;
+    const [, k, v] = kv;
+    rawVals[k] = v;
+    if (v.startsWith('"')) {
+      try { fm[k] = JSON.parse(v); } catch { fm[k] = v.replace(/^"|"$/g, '').replace(/\\"/g, '"'); }
+    } else {
+      fm[k] = v;
+    }
+  }
+  return { fm, raw: rawVals, body: m[2] };
+}
+
+function buildFrontmatter(fm, rawVals) {
+  const keys = [...FM_ORDER.filter(k => k in fm), ...Object.keys(fm).filter(k => !FM_ORDER.includes(k))];
+  const lines = keys.map(k => {
+    if (k === 'tags') return `tags: ${rawVals.tags || '[]'}`;
+    return `${k}: ${JSON.stringify(String(fm[k] ?? ''))}`;
+  });
+  return `---\n${lines.join('\n')}\n---\n`;
+}
+
+function normHeading(s) {
+  return String(s || '').toLowerCase().replace(/[*_`#]/g, '').replace(/&[a-z]+;/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+/* Insert a standalone markdown line after the heading whose text matches; returns [body, inserted?] */
+function insertAfterHeading(body, heading, markdownLine) {
+  const target = normHeading(heading);
+  if (!target) return [body, false];
+  const lines = body.split('\n');
+  let idx = lines.findIndex(l => /^#{2,4}\s/.test(l) && normHeading(l) === target);
+  if (idx < 0) idx = lines.findIndex(l => /^#{2,4}\s/.test(l) && normHeading(l).startsWith(target));
+  if (idx < 0) return [body, false];
+  lines.splice(idx + 1, 0, '', markdownLine, '');
+  return [lines.join('\n').replace(/\n{3,}/g, '\n\n'), true];
+}
+
+function stripLeadingH1(md) {
+  return md.replace(/^\s*#\s+[^\n]+\n+/, '');
+}
+
+async function githubRead(token, repo, branch, filePath) {
+  const data = await httpGet(
+    `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${encodeURIComponent(branch)}`,
+    { Authorization: `token ${token}`, 'User-Agent': 'Precision-Remodel-CMS', Accept: 'application/vnd.github.v3+json' });
+  if (!data || typeof data.content !== 'string') {
+    return { ok: false, error: (data && data.message) || 'not found' };
+  }
+  return { ok: true, text: Buffer.from(data.content, 'base64').toString('utf8') };
+}
+
+function applyUpdate(rawMd, { metaTitle, metaDescription, title, insertions = [] }) {
+  const { fm, raw, body: origBody } = parseFrontmatter(rawMd);
+  let body = origBody;
+  const inserted = [], skipped = [];
+  for (const ins of insertions) {
+    const src = (ins.markdown.match(/\((\/images\/blog\/[^\s)]+)/) || [])[1];
+    if (src && body.includes(src)) { skipped.push(ins.afterHeading); continue; }
+    const [next, ok] = insertAfterHeading(body, ins.afterHeading, ins.markdown);
+    if (ok) { body = next; inserted.push(ins.afterHeading); } else { skipped.push(ins.afterHeading); }
+  }
+  if (metaTitle) fm.metaTitle = metaTitle;
+  if (metaDescription) {
+    fm.metaDescription = metaDescription;
+    if (!fm.excerpt) fm.excerpt = metaDescription;
+  }
+  if (title) fm.title = title;
+  const md = buildFrontmatter(fm, raw) + '\n' + body.replace(/^\n+/, '');
+  return { fm, body, md, inserted, skipped };
+}
+
+async function updatePost(data) {
+  const json = (statusCode, obj) => ({ statusCode, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) });
+  const { slug, metaTitle = '', metaDescription = '', title = '', images = [], insertions = [] } = data;
+  if (!/^[a-z0-9][a-z0-9-]{0,150}$/.test(slug || '')) return json(400, { error: 'invalid slug' });
+  const imgErr = validateImages(images);
+  if (imgErr) return json(400, { error: imgErr });
+  if (!Array.isArray(insertions) || insertions.length > 8) return json(400, { error: 'insertions must be an array of at most 8' });
+  for (const ins of insertions) {
+    if (!ins || typeof ins.afterHeading !== 'string' || !INSERT_RE.test(ins.markdown || '')) {
+      return json(400, { error: 'each insertion needs afterHeading and a single /images/blog/ image line' });
+    }
+  }
+  for (const [k, v, max] of [['metaTitle', metaTitle, 80], ['metaDescription', metaDescription, 200], ['title', title, 160]]) {
+    if (typeof v !== 'string' || v.length > max || /[\n<>]/.test(v)) return json(400, { error: `${k} must be plain text up to ${max} characters` });
+  }
+
+  const token = process.env.GITHUB_TOKEN, repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
+  if (!token || !repo) return json(500, { error: 'GITHUB_TOKEN / GITHUB_REPO not configured' });
+
+  const mdPath = `precision-remodel-site/blog/posts/${slug}.md`;
+  const cur = await githubRead(token, repo, branch, mdPath);
+  if (!cur.ok) return json(cur.error === 'Not Found' ? 404 : 500, { error: 'Could not read post', detail: cur.error });
+
+  const up = applyUpdate(cur.text, { metaTitle, metaDescription, title, insertions });
+
+  for (const img of images) {
+    const r = await githubWrite(token, repo, branch, `precision-remodel-site/images/blog/${img.filename}`, img.base64, true);
+    if (!r.ok) return json(500, { error: 'Image write failed', file: img.filename, detail: r.error });
+  }
+  const w = await githubWrite(token, repo, branch, mdPath, up.md);
+  if (!w.ok) return json(500, { error: 'GitHub write failed', detail: w.error });
+
+  const fm = up.fm;
+  const wordCount = up.body.split(/\s+/).length;
+  const firstImg = (up.body.match(/!\[[^\]]*\]\((\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp))/) || [])[1];
+  const html = await writeStaticPostHtml(token, repo, branch, {
+    safeSlug: slug, title: fm.title || slug, postDate: /^\d{4}-\d{2}-\d{2}$/.test(fm.date || '') ? fm.date : new Date().toISOString().split('T')[0],
+    category: fm.category || 'Remodeling', excerpt: fm.excerpt || '', metaDescription: fm.metaDescription || '',
+    metaTitle: fm.metaTitle || '', readTime: fm.readTime || `${Math.max(1, Math.ceil(wordCount / 200))} min read`,
+    sanitizedContent: stripLeadingH1(up.body),
+    ogImage: firstImg ? `https://precisionremodelingmd.com${firstImg}` : null,
+  });
+  if (!html.ok) return json(500, { error: 'HTML write failed', detail: html.error });
+
+  if (title) {
+    await updateManifestEntry(token, repo, branch, slug, { title }).catch(() => {});
+  }
+  await triggerDeploy();
+  return json(200, { success: true, slug, url: `/blog/${slug}`, inserted: up.inserted, skipped: up.skipped });
+}
+
+async function updateManifestEntry(token, repo, branch, slug, fields) {
+  const r = await githubRead(token, repo, branch, 'precision-remodel-site/blog/posts.json');
+  if (!r.ok) return;
+  const posts = JSON.parse(r.text);
+  const p = posts.find(x => x.slug === slug);
+  if (!p) return;
+  Object.assign(p, fields);
+  return githubWrite(token, repo, branch, 'precision-remodel-site/blog/posts.json', JSON.stringify(posts, null, 2));
+}
+
+exports._test = { parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages };
