@@ -63,7 +63,21 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON body' };
   }
 
-  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber } = data;
+  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', rowNumber, images = [] } = data;
+
+  /* Optional job photos sent with the post: [{ filename, base64 }] → committed to /images/blog/.
+     The site's CSP only allows its own images, so photos must live in the repo. */
+  if (!Array.isArray(images) || images.length > 8) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'images must be an array of at most 8 files' }) };
+  }
+  for (const img of images) {
+    if (!img || !/^[a-z0-9][a-z0-9-]{0,80}\.(jpg|jpeg|png|webp)$/.test(img.filename || '') || typeof img.base64 !== 'string') {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Each image needs a safe filename (a-z, 0-9, -) and base64 data' }) };
+    }
+    if (Buffer.byteLength(img.base64, 'base64') > 6 * 1024 * 1024) {
+      return { statusCode: 400, body: JSON.stringify({ error: `Image too large: ${img.filename}` }) };
+    }
+  }
 
   /* Strip code fences and duplicate frontmatter that Claude sometimes adds */
   const content = sanitizeClaudeOutput(rawContent);
@@ -109,6 +123,14 @@ ${content.trim()}
   const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
   if (githubToken && githubRepo) {
+    for (const img of images) {
+      const r = await githubWrite(githubToken, githubRepo, githubBranch,
+        `precision-remodel-site/images/blog/${img.filename}`, img.base64, true);
+      if (!r.ok) {
+        return { statusCode: 500, body: JSON.stringify({ error: 'Image write failed', file: img.filename, detail: r.error }) };
+      }
+    }
+
     const filePath = `precision-remodel-site/blog/posts/${safeSlug}.md`;
     const result = await githubWrite(githubToken, githubRepo, githubBranch, filePath, markdown);
     if (!result.ok) {
@@ -138,8 +160,10 @@ ${content.trim()}
     }).catch(() => { /* manifest update failure is non-fatal */ });
 
     /* Write static pre-rendered HTML page for this post */
+    const firstImg = (content.match(/!\[[^\]]*\]\((\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp))/) || [])[1];
     const htmlResult = await writeStaticPostHtml(githubToken, githubRepo, githubBranch, {
       safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent: content,
+      ogImage: firstImg ? `https://precisionremodelingmd.com${firstImg}` : null,
     });
     if (!htmlResult.ok) {
       return { statusCode: 500, body: JSON.stringify({ error: 'HTML write failed', detail: htmlResult.error }) };
@@ -245,8 +269,8 @@ async function markPublished(rowNumber) {
 /* --------------------------------------------------------
    GitHub API helper — creates or updates a file in the repo
    -------------------------------------------------------- */
-async function githubWrite(token, repo, branch, filePath, content) {
-  const encoded = Buffer.from(content).toString('base64');
+async function githubWrite(token, repo, branch, filePath, content, isBase64 = false) {
+  const encoded = isBase64 ? content : Buffer.from(content).toString('base64');
   const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
 
   /* Check if file already exists (to get its SHA for update) */
@@ -335,7 +359,7 @@ async function triggerDeploy() {
    Build and write a fully pre-rendered static HTML blog post
    -------------------------------------------------------- */
 async function writeStaticPostHtml(token, repo, branch, {
-  safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent,
+  safeSlug, title, postDate, category, excerpt, metaDescription, readTime, sanitizedContent, ogImage,
 }) {
   const bodyHtml = markdownToHtml(sanitizedContent);
   const displayDate = formatPostDate(postDate);
@@ -375,7 +399,7 @@ async function writeStaticPostHtml(token, repo, branch, {
   <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${pageDesc}">
-  <meta property="og:image" content="https://precisionremodelingmd.com/images/projects/kitchen-perry-hall-after.png">
+  <meta property="og:image" content="${escapeHtml(ogImage || 'https://precisionremodelingmd.com/images/projects/kitchen-perry-hall-after.png')}">
 
   <script type="application/ld+json">
   ${ldJson}
@@ -520,7 +544,17 @@ function escapeHtml(str) {
 /* --------------------------------------------------------
    Convert inline markdown to HTML (bold, italic, code, links)
    -------------------------------------------------------- */
+function imageTag(alt, src, title) {
+  /* only the site's own blog images or https URLs */
+  if (!/^(\/images\/[a-z0-9/_-]+\.(jpg|jpeg|png|webp)|https:\/\/[^\s"<>]+)$/i.test(src)) return '';
+  const t = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"${t} loading="lazy" style="max-width:100%;height:auto;border-radius:6px;">`;
+}
+
+const IMG_RE = /!\[([^\]]*)\]\(([^\s)]+)(?:\s+"(.*?)")?\)/g;
+
 function inlineMarkdown(text) {
+  text = text.replace(IMG_RE, (m, alt, src, title) => imageTag(alt, src, title));
   return text
     .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -563,6 +597,18 @@ function markdownToHtml(md) {
 
     /* Blank line */
     if (line.trim() === '') { i++; continue; }
+
+    /* Image on its own line → figure with caption */
+    const im = line.trim().match(/^!\[([^\]]*)\]\(([^\s)]+)(?:\s+"(.*?)")?\)$/);
+    if (im) {
+      const tag = imageTag(im[1], im[2], '');
+      if (tag) {
+        const cap = im[3] ? `<figcaption style="font-size:0.9rem;color:var(--text-muted);margin-top:0.4rem;">${escapeHtml(im[3])}</figcaption>` : '';
+        output.push(`<figure style="margin:2rem 0;">${tag}${cap}</figure>`);
+      }
+      i++;
+      continue;
+    }
 
     /* Heading */
     const hm = line.match(/^(#{1,6})\s+(.+)$/);
