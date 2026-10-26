@@ -67,12 +67,17 @@ exports.handler = async (event) => {
     return updatePost(data);
   }
 
-  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', metaTitle = '', rowNumber, images = [] } = data;
+  const { title, slug, content: rawContent, category = 'General', tags = [], date, excerpt = '', metaDescription = '', metaTitle = '', rowNumber, images = [], faq: rawFaq } = data;
 
   /* Optional job photos sent with the post: [{ filename, base64 }] → committed to /images/blog/.
      The site's CSP only allows its own images, so photos must live in the repo. */
   const imgErr = validateImages(images);
   if (imgErr) return { statusCode: 400, body: JSON.stringify({ error: imgErr }) };
+
+  /* Optional FAQ pairs: [{ question, answer }] → front matter + FAQPage JSON-LD */
+  const faqCheck = normalizeFaq(rawFaq);
+  if (faqCheck.error) return { statusCode: 400, body: JSON.stringify({ error: faqCheck.error }) };
+  const faq = faqCheck.faq;
 
   /* Strip code fences and duplicate frontmatter that Claude sometimes adds */
   const content = sanitizeClaudeOutput(rawContent);
@@ -105,7 +110,7 @@ category: "${category}"
 tags: [${tagList}]
 excerpt: "${excerpt.replace(/"/g, '\\"')}"
 metaDescription: "${metaDescription.replace(/"/g, '\\"')}"
-${metaTitle ? `metaTitle: "${metaTitle.replace(/"/g, '\\"')}"\n` : ''}author: "Precision Remodel LLC"
+${metaTitle ? `metaTitle: "${metaTitle.replace(/"/g, '\\"')}"\n` : ''}${faq.length ? `faq: ${faqFrontmatterValue(faq)}\n` : ''}author: "Precision Remodel LLC"
 readTime: "${readTime}"
 ---
 
@@ -157,7 +162,7 @@ ${content.trim()}
     /* Write static pre-rendered HTML page for this post */
     const firstImg = (content.match(/!\[[^\]]*\]\((\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp))/) || [])[1];
     const htmlResult = await writeStaticPostHtml(githubToken, githubRepo, githubBranch, {
-      safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent: content,
+      safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent: content, faq,
       ogImage: firstImg ? `https://precisionremodelingmd.com${firstImg}` : null,
     });
     if (!htmlResult.ok) {
@@ -359,9 +364,10 @@ async function writeStaticPostHtml(token, repo, branch, opts) {
 }
 
 function buildStaticPostHtml({
-  safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent, ogImage,
+  safeSlug, title, postDate, category, excerpt, metaDescription, metaTitle, readTime, sanitizedContent, ogImage, faq,
 }) {
   const bodyHtml = markdownToHtml(sanitizedContent);
+  const faqLd = faqJsonLd(faq, bodyHtml);
   const displayDate = formatPostDate(postDate);
   const pageTitle = metaTitle ? escapeHtml(metaTitle) : `${escapeHtml(title)} | Precision Remodel LLC`;
   const pageDesc = escapeHtml(metaDescription || excerpt || '');
@@ -404,7 +410,11 @@ function buildStaticPostHtml({
   <script type="application/ld+json">
   ${ldJson}
   </script>
-
+${faqLd ? `
+  <script type="application/ld+json">
+  ${faqLd}
+  </script>
+` : ''}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -518,6 +528,68 @@ function buildStaticPostHtml({
 </html>`;
 
   return html;
+}
+
+/* --------------------------------------------------------
+   FAQ schema. Payload `faq: [{ question, answer }]` (plain text).
+   Stored in front matter as one JSON-encoded string line,
+   `faq: "[{\"question\":...}]"`, which parseFrontmatter already
+   decodes and buildFrontmatter writes back unchanged, so the
+   update path round-trips it. A FAQPage block is emitted only
+   for pairs whose question text is visible in the rendered body
+   (Google requires on-page FAQ content).
+   -------------------------------------------------------- */
+const FAQ_MAX = 20;
+
+function normalizeFaq(input) {
+  if (input === undefined || input === null || input === '') return { faq: [] };
+  let arr = input;
+  if (typeof arr === 'string') { try { arr = JSON.parse(arr); } catch { return { error: 'faq must be an array of { question, answer }' }; } }
+  if (!Array.isArray(arr)) return { error: 'faq must be an array of { question, answer }' };
+  if (arr.length > FAQ_MAX) return { error: `faq allows at most ${FAQ_MAX} items` };
+  const faq = [];
+  for (const item of arr) {
+    const q = item && typeof item.question === 'string' ? item.question.replace(/\s+/g, ' ').trim() : '';
+    const a = item && typeof item.answer === 'string' ? item.answer.replace(/\s+/g, ' ').trim() : '';
+    if (!q || !a) return { error: 'each faq item needs a non-empty question and answer' };
+    if (q.length > 300 || a.length > 2000) return { error: 'faq question max 300 chars, answer max 2000 chars' };
+    faq.push({ question: q, answer: a });
+  }
+  return { faq };
+}
+
+function faqFrontmatterValue(faq) {
+  return JSON.stringify(JSON.stringify(faq));
+}
+
+function faqVisibleText(s) {
+  return String(s || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&(amp|lt|gt|quot|#39|apos|nbsp|rsquo|lsquo|rdquo|ldquo|mdash|ndash);/g, ' ')
+    .replace(/[*_`#>\[\]]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function faqJsonLd(faq, bodyHtml) {
+  const list = normalizeFaq(faq).faq || [];
+  if (!list.length) return '';
+  const body = ' ' + faqVisibleText(bodyHtml) + ' ';
+  const visible = list.filter(p => {
+    const q = faqVisibleText(p.question);
+    return q && body.includes(' ' + q + ' ');
+  });
+  if (!visible.length) return '';
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: visible.map(p => ({
+      '@type': 'Question',
+      name: p.question,
+      acceptedAnswer: { '@type': 'Answer', text: p.answer },
+    })),
+  }, null, 2).replace(/<\//g, '<\\/').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 }
 
 /* --------------------------------------------------------
@@ -929,7 +1001,7 @@ async function updatePost(data) {
     safeSlug: slug, title: fm.title || slug, postDate: /^\d{4}-\d{2}-\d{2}$/.test(fm.date || '') ? fm.date : new Date().toISOString().split('T')[0],
     category: fm.category || 'Remodeling', excerpt: fm.excerpt || '', metaDescription: fm.metaDescription || '',
     metaTitle: fm.metaTitle || '', readTime: fm.readTime || `${Math.max(1, Math.ceil(wordCount / 200))} min read`,
-    sanitizedContent: stripLeadingH1(up.body),
+    sanitizedContent: stripLeadingH1(up.body), faq: fm.faq,   /* keep FAQPage schema on re-render */
     ogImage: firstImg ? `https://precisionremodelingmd.com${firstImg}` : null,
   });
   if (!html.ok) return json(500, { error: 'HTML write failed', detail: html.error });
@@ -960,4 +1032,4 @@ async function updateManifestEntry(token, repo, branch, slug, fields) {
   return githubWrite(token, repo, branch, 'precision-remodel-site/blog/posts.json', JSON.stringify(posts, null, 2));
 }
 
-exports._test = { markdownToHtml, parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages, validateBody };
+exports._test = { markdownToHtml, normalizeFaq, faqFrontmatterValue, faqJsonLd, parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages, validateBody };
