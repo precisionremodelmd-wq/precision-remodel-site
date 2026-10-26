@@ -5,6 +5,34 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Duplicate posts retired 2026-10-26 (plan 3.2). These must come BEFORE the
+# /blog/:slug rewrite, and need force = true because blog/<slug>.html still
+# exists in the publish folder and Netlify won't apply an unforced rule over
+# an existing file (which also covers the extensionless URL).
+[[redirects]]
+  from = "/blog/custom-cabinetry-vs-stock-cabinets"
+  to = "/blog/custom-cabinetry-vs-stock-cabinets-what-perry-hall-homeowners-need-to-know"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/custom-cabinetry-vs-stock-cabinets.html"
+  to = "/blog/custom-cabinetry-vs-stock-cabinets-what-perry-hall-homeowners-need-to-know"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/expert-kitchen-bathroom-remodeling-ne-baltimore-county"
+  to = "/blog/expert-kitchen-bathroom-remodeling-northeast-baltimore-county"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/expert-kitchen-bathroom-remodeling-ne-baltimore-county.html"
+  to = "/blog/expert-kitchen-bathroom-remodeling-northeast-baltimore-county"
+  status = 301
+  force = true
+
 # Serve blog posts via the post template (URL rewrite)
 [[redirects]]
   from = "/blog/:slug"
@@ -33,6 +61,13 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; base-uri 'self'; frame-ancestors 'none'"
+
+# llms.txt as plain text
+[[headers]]
+  for = "/llms.txt"
+    [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
 
 # No-cache HTML
 [[headers]]
