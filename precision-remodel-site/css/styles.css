@@ -1418,12 +1418,24 @@ footer {
 
 .post-body blockquote p { margin: 0; font-style: italic; font-size: 1.125rem; }
 
+/* Tables from markdown (new-post.js wraps each in .table-wrap) */
+.post-body .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.post-body .table-wrap table { margin: 0; border-style: hidden; }
 .post-body table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0 2rem;
   font-size: 0.9rem;
 }
+.post-body td { line-height: 1.6; vertical-align: top; }
+.post-body tbody tr:nth-child(even) td { background: rgba(240, 237, 232, 0.025); }
+.post-body td code, .post-body th code { font-size: 0.85em; }
 .post-body th, .post-body td {
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
@@ -1437,6 +1449,11 @@ footer {
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+@media (max-width: 600px) {
+  .post-body table { font-size: 0.85rem; }
+  .post-body th, .post-body td { padding: 0.6rem 0.75rem; }
+  .post-body .table-wrap table { min-width: 480px; }
 }
 
 .post-cta {

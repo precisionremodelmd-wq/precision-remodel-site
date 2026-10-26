@@ -565,12 +565,78 @@ function inlineMarkdown(text) {
 }
 
 /* --------------------------------------------------------
+   GitHub-style tables: | a | b | header row, then a separator
+   row (|---|:--:|--:|), then body rows until a blank line or a
+   line without a pipe. Cells get inline markdown after their
+   text is HTML-escaped; output is wrapped in .table-wrap so
+   wide tables scroll sideways on phones.
+   -------------------------------------------------------- */
+const TABLE_SEP_RE = /^\s*\|?\s*:?-{1,}:?\s*(\|\s*:?-{1,}:?\s*)*\|?\s*$/;
+
+function splitTableRow(line) {
+  let s = line.trim();
+  if (s.startsWith('|')) s = s.slice(1);
+  if (s.endsWith('|') && !s.endsWith('\\|')) s = s.slice(0, -1);
+  const cells = [];
+  let cur = '';
+  let inCode = false;
+  for (let k = 0; k < s.length; k++) {
+    const ch = s[k];
+    if (ch === '\\' && s[k + 1] === '|') { cur += '|'; k++; continue; }
+    if (ch === '`') inCode = !inCode;
+    if (ch === '|' && !inCode) { cells.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  cells.push(cur.trim());
+  return cells;
+}
+
+function isTableStart(lines, i) {
+  const head = lines[i];
+  const sep = lines[i + 1];
+  if (!head || sep === undefined || !head.includes('|') || !sep.includes('-')) return false;
+  if (!TABLE_SEP_RE.test(sep)) return false;
+  return splitTableRow(head).length === splitTableRow(sep).length;
+}
+
+function escapeCell(str) {
+  return String(str).replace(/&(?!#?\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function tableToHtml(lines, i) {
+  const head = splitTableRow(lines[i]);
+  const aligns = splitTableRow(lines[i + 1]).map(c => {
+    const l = c.startsWith(':'), r = c.endsWith(':');
+    return l && r ? 'center' : r ? 'right' : l ? 'left' : '';
+  });
+  const cell = (tag, txt, k) => {
+    const a = aligns[k] ? ` style="text-align:${aligns[k]}"` : '';
+    return `<${tag}${a}>${inlineMarkdown(escapeCell(txt))}</${tag}>`;
+  };
+  let j = i + 2;
+  const rows = [];
+  while (j < lines.length && lines[j].trim() !== '' && lines[j].includes('|') && !/\x00CODE\d+\x00/.test(lines[j])) {
+    const cells = splitTableRow(lines[j]);
+    rows.push(`<tr>${head.map((_, k) => cell('td', cells[k] || '', k)).join('')}</tr>`);
+    j++;
+  }
+  const html = '<div class="table-wrap"><table>\n'
+    + `<thead><tr>${head.map((h, k) => cell('th', h, k)).join('')}</tr></thead>\n`
+    + (rows.length ? `<tbody>\n${rows.join('\n')}\n</tbody>\n` : '')
+    + '</table></div>';
+  return { html, next: j };
+}
+
+/* --------------------------------------------------------
    Convert a markdown string to an HTML string.
    Handles headings, paragraphs, lists, blockquotes,
-   fenced code blocks, horizontal rules, and inline styles.
+   fenced code blocks, horizontal rules, tables, and inline styles.
    -------------------------------------------------------- */
 function markdownToHtml(md) {
   if (!md) return '';
+  /* CRLF input used to hang this function: "# Title\r" failed the heading
+     regex and the paragraph loop broke on it without advancing. */
+  md = String(md).replace(/\r\n?/g, '\n');
 
   /* Protect fenced code blocks */
   const codeBlocks = [];
@@ -606,6 +672,14 @@ function markdownToHtml(md) {
         output.push(`<figure style="margin:2rem 0;">${tag}${cap}</figure>`);
       }
       i++;
+      continue;
+    }
+
+    /* Table */
+    if (isTableStart(lines, i)) {
+      const t = tableToHtml(lines, i);
+      output.push(t.html);
+      i = t.next;
       continue;
     }
 
@@ -669,12 +743,12 @@ function markdownToHtml(md) {
       if (l.startsWith('> ')) break;
       if (/^[-*_]{3,}\s*$/.test(l)) break;
       if (/\x00CODE\d+\x00/.test(l)) break;
+      if (para.length && isTableStart(lines, i)) break;
       para.push(l);
       i++;
     }
-    if (para.length > 0) {
-      output.push(`<p>${inlineMarkdown(para.join(' '))}</p>`);
-    }
+    if (para.length === 0) { para.push(lines[i]); i++; }  /* never stall on an unmatched line */
+    output.push(`<p>${inlineMarkdown(para.join(' '))}</p>`);
   }
 
   /* Restore code blocks */
@@ -886,4 +960,4 @@ async function updateManifestEntry(token, repo, branch, slug, fields) {
   return githubWrite(token, repo, branch, 'precision-remodel-site/blog/posts.json', JSON.stringify(posts, null, 2));
 }
 
-exports._test = { parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages, validateBody };
+exports._test = { markdownToHtml, parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages, validateBody };
