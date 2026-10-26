@@ -1,0 +1,6 @@
+# Duplicate posts retired 2026-10-26. "!" forces the redirect even though the old
+# .html files still exist. Netlify always reads this file from the publish folder.
+/blog/custom-cabinetry-vs-stock-cabinets                         /blog/custom-cabinetry-vs-stock-cabinets-what-perry-hall-homeowners-need-to-know  301!
+/blog/custom-cabinetry-vs-stock-cabinets.html                    /blog/custom-cabinetry-vs-stock-cabinets-what-perry-hall-homeowners-need-to-know  301!
+/blog/expert-kitchen-bathroom-remodeling-ne-baltimore-county      /blog/expert-kitchen-bathroom-remodeling-northeast-baltimore-county             301!
+/blog/expert-kitchen-bathroom-remodeling-ne-baltimore-county.html /blog/expert-kitchen-bathroom-remodeling-northeast-baltimore-county             301!
