@@ -703,7 +703,10 @@ function validateImages(images) {
    Update an existing post (approved in the SEO Command Center):
    { action: "update", slug, metaTitle?, metaDescription?, title?,
      images?: [{ filename, base64 }],
-     insertions?: [{ afterHeading, markdown: '![alt](/images/blog/x.jpg "caption")' }] }
+     insertions?: [{ afterHeading, markdown: '![alt](/images/blog/x.jpg "caption")' }],
+     body?: "full replacement markdown body" }
+   body replaces everything after the front matter (front matter kept, readTime recomputed; insertions are
+   then applied to the new body). The slug / URL never changes.
    Rewrites blog/posts/<slug>.md and re-renders blog/<slug>.html as a full static page
    (older posts were client-rendered shells that Google saw as "Blog | ..." / "Loading…").
    -------------------------------------------------------- */
@@ -769,9 +772,29 @@ async function githubRead(token, repo, branch, filePath) {
   return { ok: true, text: Buffer.from(data.content, 'base64').toString('utf8') };
 }
 
-function applyUpdate(rawMd, { metaTitle, metaDescription, title, insertions = [] }) {
+const MAX_BODY = 60000;
+
+/* A replacement body from the SEO Command Center: same markdown the converter already renders. Images may only
+   point at the site's own /images/blog/ files (the CSP blocks everything else). */
+function validateBody(body) {
+  if (typeof body !== 'string' || !body.trim()) return 'body must be non-empty markdown';
+  if (body.length > MAX_BODY) return `body must be at most ${MAX_BODY} characters`;
+  if (/^\s*---\s*\n[\s\S]*?\n---\s*(\n|$)/.test(body) && /^\s*---\s*\n[A-Za-z_]\w*:/.test(body)) return 'body must not include front matter';
+  if (/<\/?[a-z][^>]*>/i.test(body.replace(/```[\s\S]*?```/g, ''))) return 'body must be markdown, not HTML';
+  for (const m of body.matchAll(/!\[[^\]]*\]\(([^\s)]+)/g)) {
+    if (!/^\/images\/blog\/[a-z0-9-]+\.(?:jpg|jpeg|png|webp)$/.test(m[1])) return `image not allowed in body: ${m[1]}`;
+  }
+  return null;
+}
+
+function applyUpdate(rawMd, { metaTitle, metaDescription, title, insertions = [], body: newBody }) {
   const { fm, raw, body: origBody } = parseFrontmatter(rawMd);
   let body = origBody;
+  if (typeof newBody === 'string' && newBody.trim()) {
+    body = stripLeadingH1(newBody.replace(/\r\n/g, '\n')).trim() + '\n';   /* not sanitizeClaudeOutput: it would eat --- rules and code fences */
+    const words = body.split(/\s+/).filter(Boolean).length;
+    fm.readTime = `${Math.max(1, Math.ceil(words / 200))} min read`;
+  }
   const inserted = [], skipped = [];
   for (const ins of insertions) {
     const src = (ins.markdown.match(/\((\/images\/blog\/[^\s)]+)/) || [])[1];
@@ -791,7 +814,7 @@ function applyUpdate(rawMd, { metaTitle, metaDescription, title, insertions = []
 
 async function updatePost(data) {
   const json = (statusCode, obj) => ({ statusCode, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) });
-  const { slug, metaTitle = '', metaDescription = '', title = '', images = [], insertions = [] } = data;
+  const { slug, metaTitle = '', metaDescription = '', title = '', images = [], insertions = [], body } = data;
   if (!/^[a-z0-9][a-z0-9-]{0,150}$/.test(slug || '')) return json(400, { error: 'invalid slug' });
   const imgErr = validateImages(images);
   if (imgErr) return json(400, { error: imgErr });
@@ -800,6 +823,10 @@ async function updatePost(data) {
     if (!ins || typeof ins.afterHeading !== 'string' || !INSERT_RE.test(ins.markdown || '')) {
       return json(400, { error: 'each insertion needs afterHeading and a single /images/blog/ image line' });
     }
+  }
+  if (body !== undefined && body !== null && body !== '') {
+    const bodyErr = validateBody(body);
+    if (bodyErr) return json(400, { error: bodyErr });
   }
   for (const [k, v, max] of [['metaTitle', metaTitle, 80], ['metaDescription', metaDescription, 200], ['title', title, 160]]) {
     if (typeof v !== 'string' || v.length > max || /[\n<>]/.test(v)) return json(400, { error: `${k} must be plain text up to ${max} characters` });
@@ -812,7 +839,7 @@ async function updatePost(data) {
   const cur = await githubRead(token, repo, branch, mdPath);
   if (!cur.ok) return json(cur.error === 'Not Found' ? 404 : 500, { error: 'Could not read post', detail: cur.error });
 
-  const up = applyUpdate(cur.text, { metaTitle, metaDescription, title, insertions });
+  const up = applyUpdate(cur.text, { metaTitle, metaDescription, title, insertions, body: body || undefined });
 
   for (const img of images) {
     const r = await githubWrite(token, repo, branch, `precision-remodel-site/images/blog/${img.filename}`, img.base64, true);
@@ -833,11 +860,20 @@ async function updatePost(data) {
   });
   if (!html.ok) return json(500, { error: 'HTML write failed', detail: html.error });
 
-  if (title) {
-    await updateManifestEntry(token, repo, branch, slug, { title }).catch(() => {});
+  const manifest = {};
+  if (title) manifest.title = title;
+  if (body) {
+    manifest.readTime = fm.readTime;
+    /* the blog index card showed the old (generic) text: refresh it */
+    manifest.excerpt = fm.excerpt || stripLeadingH1(up.body).replace(/^#{1,6}\s+.+$/gm, '').replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        .replace(/[*_`#>\[\]!]/g, '').replace(/\s+/g, ' ').trim().slice(0, 220);
+  }
+  if (Object.keys(manifest).length) {
+    await updateManifestEntry(token, repo, branch, slug, manifest).catch(() => {});
   }
   await triggerDeploy();
-  return json(200, { success: true, slug, url: `/blog/${slug}`, inserted: up.inserted, skipped: up.skipped });
+  return json(200, { success: true, slug, url: `/blog/${slug}`, inserted: up.inserted, skipped: up.skipped,
+    bodyReplaced: !!body });
 }
 
 async function updateManifestEntry(token, repo, branch, slug, fields) {
@@ -850,4 +886,4 @@ async function updateManifestEntry(token, repo, branch, slug, fields) {
   return githubWrite(token, repo, branch, 'precision-remodel-site/blog/posts.json', JSON.stringify(posts, null, 2));
 }
 
-exports._test = { parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages };
+exports._test = { parseFrontmatter, buildFrontmatter, insertAfterHeading, applyUpdate, buildStaticPostHtml, stripLeadingH1, validateImages, validateBody };
