@@ -1,11 +1,12 @@
 ---
-title: "How Much Does a Kitchen Remodel Costin Essex Maryland"
+title: "How Much Does a Kitchen Remodel Cost in Essex, Maryland?"
 slug: "how-much-does-a-kitchen-remodel-costin-essex-maryland"
 date: "2026-06-07"
 category: "Kitchen"
 tags: []
-excerpt: ""
-metaDescription: ""
+excerpt: "See what kitchen remodels cost in Essex, Middle River and White Marsh, from cosmetic refreshes to full gut renovations, and what drives the price."
+metaDescription: "See what kitchen remodels cost in Essex, Middle River and White Marsh, from cosmetic refreshes to full gut renovations, and what drives the price."
+metaTitle: "Kitchen Remodel Cost in Essex, Maryland | Precision Remodel"
 author: "Precision Remodel LLC"
 readTime: "6 min read"
 ---
