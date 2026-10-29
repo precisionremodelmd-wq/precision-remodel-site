@@ -5,7 +5,8 @@ date: "2026-05-26"
 category: "Bathroom Remodeling"
 tags: []
 excerpt: "Planning a bathroom remodel in northeast Baltimore County? Get real cost estimates, project timelines, and expert advice from a licensed Maryland contractor."
-metaDescription: "How much does a bathroom remodel cost in northeast Baltimore County? Real price ranges, project tiers, and what drives costs — from a licensed Maryland contractor."
+metaDescription: "What a bathroom remodel costs in northeast Baltimore County: three budget tiers, what drives price, timelines, and how to choose a contractor."
+metaTitle: "Bathroom Remodel Cost Guide: Baltimore County, MD 2026"
 author: "Precision Remodel LLC"
 readTime: "6 min read"
 ---
