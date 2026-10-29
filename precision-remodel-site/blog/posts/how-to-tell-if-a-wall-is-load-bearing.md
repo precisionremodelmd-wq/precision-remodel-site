@@ -6,6 +6,7 @@ category: "Structural"
 tags: ["how to tell if a wall is load bearing", "is my wall load bearing", "floor joist direction load bearing", "load bearing wall basement beam", "check if wall is structural"]
 excerpt: "A step-by-step method for checking whether a wall is structural — basement, attic, and floor plan clues you can gather yourself in about 30 minutes."
 metaDescription: "A step-by-step method for checking whether a wall is structural — basement, attic, and floor plan clues you can gather yourself in about 30 minutes."
+metaTitle: "How to Tell If a Wall Is Load Bearing: 7-Step Walkthrough"
 author: "Precision Remodel LLC"
 readTime: "8 min read"
 ---
