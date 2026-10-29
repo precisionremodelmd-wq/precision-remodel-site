@@ -4,8 +4,9 @@ slug: "home-remodeling-tips-northeast-baltimore-county"
 date: "2026-06-12"
 category: "Kitchen"
 tags: []
-excerpt: ""
-metaDescription: ""
+excerpt: "Plan, budget, hire a licensed contractor and navigate Baltimore County permits. Remodeling tips for homeowners in Perry Hall, White Marsh and Essex."
+metaDescription: "Plan, budget, hire a licensed contractor and navigate Baltimore County permits. Remodeling tips for homeowners in Perry Hall, White Marsh and Essex."
+metaTitle: "Home Remodeling Tips for Northeast Baltimore County, MD"
 author: "Precision Remodel LLC"
 readTime: "4 min read"
 ---
