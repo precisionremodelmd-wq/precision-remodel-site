@@ -5,7 +5,8 @@ date: "2026-05-30"
 category: "Kitchen Remodeling"
 tags: []
 excerpt: "Is your kitchen telling you it's time for an upgrade? Here are five clear signs White Marsh and Perry Hall homeowners should look for before planning a kitchen remodel."
-metaDescription: "5 signs it's time to remodel your kitchen — from outdated layouts to worn surfaces. Expert advice for homeowners in northeast Baltimore County from a licensed Maryland contractor."
+metaDescription: "Five signs your kitchen needs more than a refresh, from a bad layout to weak storage. Guidance for White Marsh, Perry Hall and Timonium homeowners."
+metaTitle: "5 Signs It's Time to Remodel Your Kitchen in Maryland"
 author: "Precision Remodel LLC"
 readTime: "6 min read"
 ---
