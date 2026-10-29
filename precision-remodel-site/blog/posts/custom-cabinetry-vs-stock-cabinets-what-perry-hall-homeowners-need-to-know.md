@@ -4,8 +4,9 @@ slug: "custom-cabinetry-vs-stock-cabinets-what-perry-hall-homeowners-need-to-kno
 date: "2026-06-21"
 category: "Kitchen"
 tags: []
-excerpt: ""
-metaDescription: ""
+excerpt: "Compare stock, semi-custom, and custom cabinets for a Perry Hall kitchen remodel: lead times, flexibility, and how cost depends on your scope."
+metaDescription: "Compare stock, semi-custom, and custom cabinets for a Perry Hall kitchen remodel: lead times, flexibility, and how cost depends on your scope."
+metaTitle: "Custom vs Stock Cabinets in Perry Hall, MD Kitchens"
 author: "Precision Remodel LLC"
 readTime: "6 min read"
 ---
