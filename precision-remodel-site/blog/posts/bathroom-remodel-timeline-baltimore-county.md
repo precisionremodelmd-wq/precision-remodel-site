@@ -6,6 +6,7 @@ category: "Planning And Scope"
 tags: ["how long does a bathroom remodel take baltimore county", "bathroom remodel timeline maryland", "bathroom remodel schedule"]
 excerpt: "Bathroom remodel timelines in Baltimore County depend on design, permits, lead times and scope. Here's what sets the schedule and how to plan."
 metaDescription: "Bathroom remodel timelines in Baltimore County depend on design, permits, lead times and scope. Here's what sets the schedule and how to plan."
+metaTitle: "Bathroom Remodel Timeline in Baltimore County: Key Phases"
 author: "Precision Remodel LLC"
 readTime: "10 min read"
 ---
