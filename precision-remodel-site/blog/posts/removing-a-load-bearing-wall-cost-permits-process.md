@@ -5,7 +5,8 @@ date: "2026-08-13"
 category: "Structural"
 tags: ["removing a load bearing wall", "load bearing wall removal cost", "LVL beam wall removal", "structural engineer letter Maryland", "permit to remove load bearing wall Baltimore County"]
 excerpt: "What it takes to open up a structural wall in a Maryland home — engineering, permits, temporary shoring, beam options, realistic cost drivers, and how to vet a contractor."
-metaDescription: "What it takes to open up a structural wall in a Maryland home — engineering, permits, temporary shoring, beam options, realistic cost drivers, and how to vet a contractor."
+metaDescription: "What it takes to remove a load-bearing wall in a Maryland home: engineering, permits, shoring, beam options, cost drivers, and how to vet a contractor."
+metaTitle: "Removing a Load-Bearing Wall in Maryland: Cost & Permits"
 author: "Precision Remodel LLC"
 readTime: "9 min read"
 ---
