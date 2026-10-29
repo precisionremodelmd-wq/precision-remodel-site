@@ -6,6 +6,7 @@ category: "Structural"
 tags: ["load bearing wall", "load path house framing", "structural wall vs partition wall", "how to know if a wall is structural"]
 excerpt: "A licensed inspector and contractor explains how load paths work, what makes a wall structural, and why it matters before you open up a floor plan."
 metaDescription: "A licensed inspector and contractor explains how load paths work, what makes a wall structural, and why it matters before you open up a floor plan."
+metaTitle: "What Makes a Wall Load Bearing? A Homeowner's Guide"
 author: "Precision Remodel LLC"
 readTime: "8 min read"
 ---
