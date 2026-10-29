@@ -5,7 +5,8 @@ date: "2026-05-24"
 category: "Home Remodeling"
 tags: []
 excerpt: "Discover what sets high-end kitchen and bathroom remodeling apart in northeast Baltimore County and how to plan a successful renovation project."
-metaDescription: "Planning a kitchen or bathroom remodel in northeast Baltimore County? Learn what to expect from a high-end renovation with Precision Remodel LLC."
+metaDescription: "Planning a high-end kitchen or bathroom remodel in Northeast Baltimore County? Learn what sets quality work apart, how to plan scope, and what to expect."
+metaTitle: "Kitchen & Bathroom Remodeling in Northeast Baltimore County"
 author: "Precision Remodel LLC"
 readTime: "4 min read"
 ---
