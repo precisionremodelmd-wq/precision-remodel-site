@@ -5,7 +5,8 @@ date: "2026-08-13"
 category: "Structural"
 tags: ["load bearing wall myths", "are trusses load bearing", "balloon framing load bearing wall", "rowhome load bearing wall Baltimore", "load bearing wall exceptions"]
 excerpt: "Truss roofs, balloon framing, Baltimore rowhomes, and the rules of thumb that get homeowners in trouble. What the shortcuts miss."
-metaDescription: "Truss roofs, balloon framing, Baltimore rowhomes, and the rules of thumb that get homeowners in trouble. What the shortcuts miss."
+metaDescription: "Five load-bearing wall myths, plus truss roofs, balloon framing, and Baltimore rowhomes, where rules of thumb fail before you plan a wall removal."
+metaTitle: "Load-Bearing Wall Myths and Exceptions | Precision Remodel"
 author: "Precision Remodel LLC"
 readTime: "8 min read"
 ---
