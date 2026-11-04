@@ -6,6 +6,7 @@ category: "Hiring A Contractor"
 tags: ["compare remodeling estimates maryland", "how to compare contractor bids", "remodeling estimate checklist"]
 excerpt: "Holding two or three remodeling quotes? Use this line-by-line checklist to compare scope, allowances, permits and payment terms before you hire in Maryland."
 metaDescription: "Holding two or three remodeling quotes? Use this line-by-line checklist to compare scope, allowances, permits and payment terms before you hire in Maryland."
+metaTitle: "Compare Remodeling Estimates in Maryland: Checklist"
 author: "Precision Remodel LLC"
 readTime: "10 min read"
 ---
