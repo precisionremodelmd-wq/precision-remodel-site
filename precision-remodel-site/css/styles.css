@@ -15,7 +15,7 @@
   --accent-dim: rgba(201, 169, 110, 0.35);
   --border: rgba(240, 237, 232, 0.08);
 
-  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-heading: 'Fraunces', Georgia, serif;
   --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
 
   --max-width: 1200px;
@@ -51,9 +51,9 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2.6rem, 5vw, 4.25rem); }
-h2 { font-size: clamp(2rem, 4vw, 3rem); }
-h3 { font-size: clamp(1.4rem, 2.5vw, 1.875rem); }
+h1 { font-size: clamp(2.3rem, 4.5vw, 3.75rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+h3 { font-size: clamp(1.3rem, 2.2vw, 1.65rem); }
 h4 { font-size: 1.2rem; }
 
 p { color: var(--text-secondary); }
@@ -344,8 +344,8 @@ p { color: var(--text-secondary); }
 }
 
 .hero-left h1 {
-  font-size: clamp(3rem, 4.5vw, 5.25rem);
-  font-style: italic;
+  font-size: clamp(2.6rem, 4vw, 4.5rem);
+  font-style: normal;
   line-height: 1.08;
   letter-spacing: -0.01em;
 }
@@ -616,8 +616,8 @@ p { color: var(--text-secondary); }
 
 .testimonial-wrap blockquote {
   font-family: var(--font-heading);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-style: italic;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  font-style: normal;
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -884,7 +884,7 @@ p { color: var(--text-secondary); }
 
 .page-hero-inner { max-width: var(--max-width); margin: 0 auto; }
 
-.page-hero h1 { font-style: italic; margin-bottom: 1.375rem; }
+.page-hero h1 { font-style: normal; margin-bottom: 1.375rem; }
 
 .page-hero .lead { max-width: 56ch; }
 
@@ -1145,7 +1145,7 @@ p { color: var(--text-secondary); }
   border-radius: var(--radius-lg);
 }
 
-.not-for-everyone h3 { font-style: italic; margin-bottom: 1.25rem; }
+.not-for-everyone h3 { font-style: normal; margin-bottom: 1.25rem; }
 .not-for-everyone ul { display: flex; flex-direction: column; gap: 0.875rem; margin-top: 1rem; }
 .not-for-everyone li { display: flex; gap: 0.875rem; font-size: 0.925rem; color: var(--text-secondary); }
 .not-for-everyone li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
@@ -1167,13 +1167,13 @@ p { color: var(--text-secondary); }
 .process-detail-num {
   font-family: var(--font-heading);
   font-size: 4rem;
-  font-weight: 300;
+  font-weight: 400;
   color: var(--accent-dim);
   line-height: 1;
   padding-top: 0.25rem;
 }
 
-.process-detail-content h3 { font-style: italic; margin-bottom: 1.25rem; }
+.process-detail-content h3 { font-style: normal; margin-bottom: 1.25rem; }
 .process-detail-content p { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; max-width: 65ch; }
 
 .process-detail-content ul {
@@ -1313,14 +1313,14 @@ footer {
 .error-code {
   font-family: var(--font-heading);
   font-size: clamp(6rem, 15vw, 10rem);
-  font-weight: 300;
+  font-weight: 400;
   color: var(--accent-dim);
   line-height: 1;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
 }
 
-.error-page h2 { font-style: italic; margin-bottom: 1rem; }
+.error-page h2 { font-style: normal; margin-bottom: 1rem; }
 .error-page p { max-width: 40ch; margin: 0 auto 2.5rem; font-size: 1rem; }
 .error-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
@@ -1371,7 +1371,7 @@ footer {
 
 .post-hero-inner { max-width: 800px; margin: 0 auto; }
 
-.post-hero h1 { font-style: italic; font-size: clamp(2rem, 4vw, 3.25rem); margin-bottom: 1.25rem; line-height: 1.2; }
+.post-hero h1 { font-style: normal; font-size: clamp(1.85rem, 3.6vw, 2.8rem); margin-bottom: 1.25rem; line-height: 1.2; }
 
 .post-meta {
   display: flex;
@@ -1399,7 +1399,7 @@ footer {
   padding: 4rem 1.5rem;
 }
 
-.post-body h2 { font-style: italic; font-size: 2rem; margin: 2.5rem 0 1rem; }
+.post-body h2 { font-style: normal; font-size: 1.75rem; margin: 2.5rem 0 1rem; }
 .post-body h3 { font-size: 1.5rem; margin: 2rem 0 0.875rem; }
 .post-body p { color: var(--text-secondary); line-height: 1.85; margin-bottom: 1.5rem; font-size: 1rem; }
 .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
@@ -1465,7 +1465,7 @@ footer {
   text-align: center;
 }
 
-.post-cta h3 { font-style: italic; margin-bottom: 0.75rem; }
+.post-cta h3 { font-style: normal; margin-bottom: 0.75rem; }
 .post-cta p { max-width: 42ch; margin: 0 auto 1.5rem; }
 
 /* --- Loading state ------------------------------------- */
@@ -1560,3 +1560,5 @@ footer {
   height: 300px;
   aspect-ratio: unset;
 }
+/* Headings: upright Fraunces (2026-11). <em> inside a heading stays upright. */
+h1 em, h2 em, h3 em, h4 em { font-style: normal; }
